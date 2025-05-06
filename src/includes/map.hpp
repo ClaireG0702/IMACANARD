@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <iostream>
 
 // génération map
 // placement objets
@@ -26,3 +28,6 @@ struct Block
     BlockType type{};
     // bool object{};
 };
+
+void displayMap(std::vector<std::vector<unsigned int>> const &map);
+std::vector<std::vector<unsigned int>> generateMap(size_t const height, size_t const width);
