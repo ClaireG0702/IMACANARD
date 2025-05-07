@@ -29,24 +29,26 @@ void displayMap(std::vector<std::vector<unsigned int>> const &map)
     }
 }
 
-unsigned int generateMapValue(bool random)
+unsigned int generateMapValue(bool random) // TODO : remove random at the end of the project and the if (random)
 {
     if (random)
     {
-        // cellular automata
+        int mapValue{std::rand() % 2}; // return 0 or 1 --> empty or plain
+        return mapValue;
     }
     return 1;
 }
 
 std::vector<std::vector<unsigned int>> generateMap(size_t const height, size_t const width)
 {
+    std::srand(std::time(nullptr));
     std::vector<std::vector<unsigned int>> map{};
     for (size_t i{}; i < height; i++)
     {
         std::vector<unsigned int> newLine{};
         for (size_t j{}; j < width; j++)
         {
-            unsigned int newValue{generateMapValue(false)};
+            unsigned int newValue{generateMapValue(true)};
             newLine.push_back(newValue);
         }
         map.push_back(newLine);

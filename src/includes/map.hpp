@@ -1,6 +1,14 @@
 #pragma once
+
+// for map
 #include <vector>
+
+// for map display
 #include <iostream>
+
+// for random cases
+#include <cstdlib>
+#include <ctime>
 
 // génération map
 // placement objets
