@@ -26,7 +26,6 @@ enum class BlockType
 
 // enum class Actions
 // {
-//     MINE,
 //     SPEED,
 //     SLOW,
 // }
@@ -39,5 +38,3 @@ struct Block
 
 void displayMap(std::vector<std::vector<unsigned int>> const &map);
 std::vector<std::vector<unsigned int>> generateMap(size_t const height, size_t const width);
-
-void digging (Block* block);
