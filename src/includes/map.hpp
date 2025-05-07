@@ -36,5 +36,14 @@ struct Block
     // bool object{};
 };
 
+struct Neighbour
+{
+    unsigned int x{};
+    unsigned int y{};
+    unsigned int value{};
+};
+
 void displayMap(std::vector<std::vector<unsigned int>> const &map);
 std::vector<std::vector<unsigned int>> generateMap(size_t const height, size_t const width);
+void cellularAutomata(std::vector<std::vector<unsigned int>> &map);
+void digging(Block *block);

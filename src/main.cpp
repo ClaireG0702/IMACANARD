@@ -39,6 +39,7 @@ int main()
 {
     std::vector<std::vector<unsigned int>> map{generateMap(10, 10)};
     displayMap(map);
+    cellularAutomata(map);
 
     return 0;
 }
