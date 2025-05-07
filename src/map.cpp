@@ -35,7 +35,7 @@ unsigned int generateMapValue(bool random)
     {
         // cellular automata
     }
-    return 2;
+    return 1;
 }
 
 std::vector<std::vector<unsigned int>> generateMap(size_t const height, size_t const width)
@@ -52,4 +52,15 @@ std::vector<std::vector<unsigned int>> generateMap(size_t const height, size_t c
         map.push_back(newLine);
     }
     return map;
+}
+
+void digging (Block* block){
+    int prob_factor{};
+    if (block->type == BlockType::PLAIN){
+        if (prob_factor == 5){
+            block->type = BlockType::OBJECT;
+        } else{
+            block->type = BlockType::EMPTY;
+        }
+    }
 }
