@@ -33,16 +33,17 @@ static Player player{};
 //         default:
 //             break;
 //         }
-//      
+//
 // 	    player.digging(blockInFront);
 // 	}
 // }
 
 int main()
 {
-    std::vector<std::vector<unsigned int>> map{generateMap(10, 10)};
+    // std::vector<std::vector<unsigned int>> oldMap{generateMap(10, 10)};
+    std::vector<Cell> map{generateMap(10, 10)};
     displayMap(map);
-    cellularAutomata(map);
+    // cellularAutomata(map);
 
     return 0;
 }

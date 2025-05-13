@@ -11,6 +11,9 @@
 #include <ctime>
 
 // génération map
+#include "glm/fwd.hpp"
+#include <glm/gtx/matrix_transform_2d.hpp>
+
 // placement objets
 // placement aléatoire
 // gestion des blocs
@@ -43,7 +46,13 @@ struct Neighbour
     unsigned int value{};
 };
 
-void displayMap(std::vector<std::vector<unsigned int>> const &map);
-std::vector<std::vector<unsigned int>> generateMap(size_t const height, size_t const width);
+struct Cell
+{
+    glm::vec2 positions; // x,y
+    unsigned int value;
+};
+
+void displayMap(std::vector<Cell> const &map);
+std::vector<Cell> generateMap(size_t const height, size_t const width);
 void cellularAutomata(std::vector<std::vector<unsigned int>> &map);
 void digging(Block *block);
