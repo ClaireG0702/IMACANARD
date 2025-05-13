@@ -44,3 +44,13 @@ foreach(SRC_MAIN_FILE ${SRC_MAIN_FILES})
     target_compile_features(${SRC_MAIN_FILE_NAME} PUBLIC cxx_std_20)
     target_include_directories(${SRC_MAIN_FILE_NAME} PUBLIC "src/")
 endforeach()
+
+# Add Libraries
+include(FetchContent)
+FetchContent_Declare(
+    glm
+    GIT_REPOSITORY https://github.com/g-truc/glm
+    GIT_TAG efec5db081e3aad807d0731e172ac597f6a39447
+)
+FetchContent_MakeAvailable(glm)
+target_link_libraries(main PUBLIC glm)

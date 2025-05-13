@@ -4,6 +4,9 @@
 #include "includes/map.hpp"
 #include "includes/player.hpp"
 
+#include "glm/fwd.hpp"
+#include <glm/gtx/matrix_transform_2d.hpp>
+
 static Player player{};
 
 // void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
