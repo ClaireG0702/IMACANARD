@@ -54,3 +54,29 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 target_link_libraries(main PUBLIC glm)
+
+# ---Add GL---
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+set(ALL_LIBRARIES ${OPENGL_LIBRARIES})
+
+# ---Add GLFW---
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(third_party/glfw)
+set(ALL_LIBRARIES ${ALL_LIBRARIES} glfw)
+
+# ---Add glad---
+add_library(glad third_party/glad/src/glad.c)
+include_directories(third_party/glad/include)
+set(ALL_LIBRARIES ${ALL_LIBRARIES} glad)
+
+# ---Add glbasimac---
+add_subdirectory(third_party/glbasimac)
+set(ALL_LIBRARIES ${ALL_LIBRARIES} glbasimac)
+include_directories(third_party/glbasimac/)
+set(CMAKE_COLOR_MAKEFILE ON)
+
+target_link_libraries(main PUBLIC ${ALL_LIBRARIES})
