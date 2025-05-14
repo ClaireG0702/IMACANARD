@@ -41,8 +41,8 @@ foreach(SRC_MAIN_FILE ${SRC_MAIN_FILES})
 
     message(STATUS "Creating executable: ${SRC_MAIN_FILE_NAME}")
     add_executable(${SRC_MAIN_FILE_NAME} ${SRC_MAIN_FILE} ${SRC_FILES})
-    target_compile_features(${SRC_MAIN_FILE_NAME} PUBLIC cxx_std_20)
-    target_include_directories(${SRC_MAIN_FILE_NAME} PUBLIC "src/")
+    target_compile_features(${SRC_MAIN_FILE_NAME} PRIVATE cxx_std_20)
+    target_include_directories(${SRC_MAIN_FILE_NAME} PRIVATE "src/")
 endforeach()
 
 # Add Libraries

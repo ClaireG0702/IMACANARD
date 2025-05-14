@@ -8,6 +8,12 @@
 #include "glm/fwd.hpp"
 #include <glm/gtx/matrix_transform_2d.hpp>
 
+// GLFW et GLBASIMAC
+#define GLFW_INCLUDE_NONE
+#include "GLFW/glfw3.h"
+#include "glad/glad.h"
+#include "glbasimac/glbi_engine.hpp"
+
 static Player player{};
 
 

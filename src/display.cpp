@@ -1,5 +1,11 @@
 #include "includes/display.hpp"
 
+// GLFW et GLBASIMAC
+#define GLFW_INCLUDE_NONE
+#include "GLFW/glfw3.h"
+#include "glad/glad.h"
+#include "glbasimac/glbi_engine.hpp"
+
 using namespace glbasimac;
 
 /* Minimal time wanted between two images */
