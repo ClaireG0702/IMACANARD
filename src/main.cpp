@@ -7,6 +7,11 @@
 #include "glm/fwd.hpp"
 #include <glm/gtx/matrix_transform_2d.hpp>
 
+#include <algorithm>
+#include <iterator>
+
+#define WIDTH 10
+
 static Player player{};
 
 // void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
@@ -41,7 +46,7 @@ static Player player{};
 int main()
 {
     // std::vector<std::vector<unsigned int>> oldMap{generateMap(10, 10)};
-    std::vector<Cell> map{generateMap(10, 10)};
+    std::vector<Cell> map{generateMap(WIDTH, WIDTH)};
     displayMap(map);
     // cellularAutomata(map);
 

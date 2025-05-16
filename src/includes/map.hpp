@@ -27,6 +27,15 @@ enum class BlockType
     OBJECT,   // shadow + anim si on a le temps
 };
 
+
+enum class Direction {
+    UP,
+    RIGHT,
+    DOWN,
+    LEFT,
+    NONE
+};
+
 // enum class Actions
 // {
 //     SPEED,
@@ -52,7 +61,16 @@ struct Cell
     unsigned int value;
 };
 
+struct CellDirection
+{
+    glm::vec2 positions; // x,y
+    Direction direction;
+};
+
 void displayMap(std::vector<Cell> const &map);
 std::vector<Cell> generateMap(size_t const height, size_t const width);
 void cellularAutomata(std::vector<std::vector<unsigned int>> &map);
 void digging(Block *block);
+
+void displayValuedMap(std::vector<Cell> const &map);
+void displayDirectedMap(std::vector<CellDirection> const &map);

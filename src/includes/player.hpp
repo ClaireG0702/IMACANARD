@@ -6,15 +6,8 @@
 // manger les ombres
 // minage (détruire un bloc)
 
-enum class Direction {
-    UP,
-    RIGHT,
-    DOWN,
-    LEFT
-};
-
 struct Player {
-    std::vector<unsigned int> position {};
+    glm::vec2 position {};
     Direction direction {};
 
     void digging (Block* block);
