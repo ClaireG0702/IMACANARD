@@ -41,8 +41,8 @@ foreach(SRC_MAIN_FILE ${SRC_MAIN_FILES})
 
     message(STATUS "Creating executable: ${SRC_MAIN_FILE_NAME}")
     add_executable(${SRC_MAIN_FILE_NAME} ${SRC_MAIN_FILE} ${SRC_FILES})
-    target_compile_features(${SRC_MAIN_FILE_NAME} PUBLIC cxx_std_20)
-    target_include_directories(${SRC_MAIN_FILE_NAME} PUBLIC "src/")
+    target_compile_features(${SRC_MAIN_FILE_NAME} PRIVATE cxx_std_20)
+    target_include_directories(${SRC_MAIN_FILE_NAME} PRIVATE "src/")
 endforeach()
 
 # Add Libraries
@@ -54,3 +54,29 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 target_link_libraries(main PUBLIC glm)
+
+# ---Add GL---
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+set(ALL_LIBRARIES ${OPENGL_LIBRARIES})
+
+# ---Add GLFW---
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(third_party/glfw)
+set(ALL_LIBRARIES ${ALL_LIBRARIES} glfw)
+
+# ---Add glad---
+add_library(glad third_party/glad/src/glad.c)
+include_directories(third_party/glad/include)
+set(ALL_LIBRARIES ${ALL_LIBRARIES} glad)
+
+# ---Add glbasimac---
+add_subdirectory(third_party/glbasimac)
+set(ALL_LIBRARIES ${ALL_LIBRARIES} glbasimac)
+include_directories(third_party/glbasimac/)
+set(CMAKE_COLOR_MAKEFILE ON)
+
+target_link_libraries(main PUBLIC ${ALL_LIBRARIES})
