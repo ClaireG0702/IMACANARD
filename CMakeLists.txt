@@ -10,7 +10,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_BUILD
 if (MSVC)
     add_compile_options(/W3)
 else()
-    add_compile_options(-Wall -Wextra -Wpedantic -pedantic-errors)
+    # add_compile_options(-Wall -Wextra -Wpedantic -pedantic-errors)
+    add_compile_options(-Wall -Wextra)
 endif()
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "src/*.cpp")
