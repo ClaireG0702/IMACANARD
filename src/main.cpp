@@ -21,43 +21,52 @@
 
 static Player player{};
 
-
-// void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-//     if (key == GLFW_KEY_Q && action == GLFW_PRESS){
-//         Block blockInFront {}; // bloc qu'on veut détruire
+// void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+// {
+//     if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+//     {
+//         Block blockInFront{}; // bloc qu'on veut détruire
 //         switch (player.direction)
 //         {
-//         case Direction::UP :
-//             blockInFront=map [];
+//         case Direction::UP:
+//             blockInFront = map[];
 //             break;
 
-//         case Direction::RIGHT :
+//         case Direction::RIGHT:
 //             /* code */
 //             break;
 
-//         case Direction::DOWN :
+//         case Direction::DOWN:
 //             /* code */
 //             break;
 
-//         case Direction::LEFT :
+//         case Direction::LEFT:
 //             /* code */
 //             break;
 
 //         default:
 //             break;
 //         }
-//
-// 	    player.digging(blockInFront);
-// 	}
+
+//         player.digging(blockInFront);
+//     }
 // }
 
 int main()
 {
     ABCD();
     // std::vector<std::vector<unsigned int>> oldMap{generateMap(10, 10)};
-    std::vector<Cell> map{generateMap(WIDTH, WIDTH)};
+    std::vector<Cell> map{generateMap(10, 10)};
     displayMap(map);
-    // cellularAutomata(map);
+    std::cout << std::endl;
+    cellularAutomata(map);
 
+    displayMap(map);
+    std::cout << std::endl;
+
+    std::vector<Cell> newMap{};
+    newMap = cellularAutomata(map);
+
+    displayMap(newMap);
     return 0;
 }
