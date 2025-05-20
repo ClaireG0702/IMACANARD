@@ -31,8 +31,8 @@ enum class BlockType
     OBJECT,   // shadow + anim si on a le temps
 };
 
-
-enum class Direction {
+enum class Direction
+{
     UP,
     RIGHT,
     DOWN,
@@ -74,6 +74,7 @@ struct CellDirection
 void displayMap(std::vector<Cell> const &map);
 std::vector<Cell> generateMap(size_t const height, size_t const width);
 std::vector<Cell> cellularAutomata(std::vector<Cell> const &map);
+std::vector<Cell> generateCellularMap(std::vector<Cell> const &map, int nbIterations);
 void displayValuedMap(std::vector<Cell> const &map);
 void displayDirectedMap(std::vector<CellDirection> const &map);
 void digging(Block *block);

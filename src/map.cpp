@@ -9,7 +9,7 @@ void displayMap(std::vector<Cell> const &map)
         switch (cell.value)
         {
         case 0:
-            std::cout << ".";
+            std::cout << ". ";
             break;
 
         case 1:
@@ -146,19 +146,38 @@ std::vector<Cell> cellularAutomata(std::vector<Cell> const &map)
     }
     return newMap;
 }
+
+std::vector<Cell> generateCellularMap(std::vector<Cell> const &map, int nbIterations)
+{
+    if (nbIterations < 0)
+    {
+        return {};
+    }
+    std::vector<Cell> newMap{};
+    for (int i{0}; i < nbIterations; i++)
+    {
+        newMap = cellularAutomata(map);
+    }
+    return newMap;
+}
+
 void displayValuedMap(std::vector<Cell> const &map)
 {
-    std::cout << "\n" << std::endl;
+    std::cout << "\n"
+              << std::endl;
 
-    for(Cell cell: map)
+    for (Cell cell : map)
     {
         if (cell.positions.x == 0)
         {
             std::cout << std::endl;
         };
-        if(cell.value < INT_MAX) {
+        if (cell.value < INT_MAX)
+        {
             std::cout << cell.value << " ";
-        } else {
+        }
+        else
+        {
             std::cout << "X ";
         }
     }
@@ -166,9 +185,10 @@ void displayValuedMap(std::vector<Cell> const &map)
 
 void displayDirectedMap(std::vector<CellDirection> const &map)
 {
-    std::cout << "\n" << std::endl;
+    std::cout << "\n"
+              << std::endl;
 
-    for(CellDirection cell: map)
+    for (CellDirection cell : map)
     {
         if (cell.positions.x == 0)
         {

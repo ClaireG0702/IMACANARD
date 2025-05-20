@@ -59,13 +59,9 @@ int main()
     std::vector<Cell> map{generateMap(10, 10)};
     displayMap(map);
     std::cout << std::endl;
-    cellularAutomata(map);
-
-    displayMap(map);
-    std::cout << std::endl;
 
     std::vector<Cell> newMap{};
-    newMap = cellularAutomata(map);
+    newMap = generateCellularMap(map, 4);
 
     displayMap(newMap);
     return 0;
