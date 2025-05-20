@@ -2,6 +2,10 @@
 
 // for map
 #include <vector>
+#include <algorithm>
+#include <optional>
+#include <array>
+#include <numeric>
 
 // for map display
 #include <iostream>
@@ -48,12 +52,12 @@ struct Block
     // bool object{};
 };
 
-struct Neighbour
-{
-    unsigned int x{};
-    unsigned int y{};
-    unsigned int value{};
-};
+// struct Neighbour
+// {
+//     unsigned int x{};
+//     unsigned int y{};
+//     unsigned int value{};
+// };
 
 struct Cell
 {
@@ -69,8 +73,7 @@ struct CellDirection
 
 void displayMap(std::vector<Cell> const &map);
 std::vector<Cell> generateMap(size_t const height, size_t const width);
-void cellularAutomata(std::vector<std::vector<unsigned int>> &map);
-void digging(Block *block);
-
+std::vector<Cell> cellularAutomata(std::vector<Cell> const &map);
 void displayValuedMap(std::vector<Cell> const &map);
 void displayDirectedMap(std::vector<CellDirection> const &map);
+void digging(Block *block);
