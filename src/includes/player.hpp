@@ -10,6 +10,6 @@ struct Player {
     glm::vec2 position {};
     Direction direction {};
 
-    void digging (Block* block);
+    void digging (Cell& block);
 };
 

@@ -1,15 +1,15 @@
 #include "includes/player.hpp"
 #include "includes/map.hpp"
 
-void Player::digging (Block* block){ //action miner
+void Player::digging (Cell& block){ //action miner
     std::srand(std::time(nullptr));
     int prob_factor{std::rand()%6};
-    // 1 chance sur 5 de trouver un objet dans le bloc destructible.
-    if (block->type == BlockType::PLAIN){
-        if (prob_factor == 5){
-            block->type = BlockType::OBJECT;
+
+    if (block.value == 1){
+        if (prob_factor == 5){ // 1 chance sur 5 de trouver un objet dans le bloc destructible.
+            block.value = 2;
         } else{
-            block->type = BlockType::EMPTY;
+            block.value = 0;
         }
     }
 }
