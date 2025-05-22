@@ -1,106 +1,172 @@
-#include "includes/character.hpp"
-#include "includes/display.hpp"
-#include "includes/enemy.hpp"
-#include "includes/map.hpp"
-#include "includes/player.hpp"
-
-// GLM
-#include "glm/fwd.hpp"
-#include <glm/gtx/matrix_transform_2d.hpp>
-
-// GLFW et GLBASIMAC
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
-#include "glbasimac/glbi_engine.hpp"
+//#include "draw_scene.hpp"
+#include "tools/matrix_stack.hpp"
+#include "includes/display.hpp"
+#include <iostream>
+#include <cmath>
 
-#include <algorithm>
-#include <iterator>
+/* Window size */
 
-#define WIDTH 10
+int WINDOW_WIDTH = 800;
+int WINDOW_HEIGHT = 800;
 
-static Player player{};
+using namespace glbasimac;
 
-static std::vector<Cell> map{};
+/* Minimal time wanted between two images */
+static const double FRAMERATE_IN_SECONDS = 1. / 30.;
+static float aspectRatio = 1.0f;
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-    if (key == GLFW_KEY_UP && (action == GLFW_PRESS ||action == GLFW_REPEAT)){
-        player.direction = Direction::UP;
-    }
-    if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS ||action == GLFW_REPEAT)){
-        player.direction = Direction::DOWN;
-    }
-    if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS ||action == GLFW_REPEAT)){
-        player.direction = Direction::LEFT;
-    }
-    if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS ||action == GLFW_REPEAT)){
-        player.direction = Direction::RIGHT;
-    }
-    
-    if (key == GLFW_KEY_Q && (action == GLFW_PRESS ||action == GLFW_REPEAT)){ // Quand on appuie sur 'A', on mine le bloc devant nous
-        auto x {player.position.x};
-        auto y {player.position.y};
-        
-        switch (player.direction)
-        {
-        case Direction::UP :{
-            y -= 1;
+static const float GL_VIEW_SIZE = 1.0f;
 
-            auto playerNeighbor{std::find_if(map.begin(), map.end(),
-                    [x,y](const Cell &cell) {return (cell.positions.x == x && cell.positions.y == y);}
-                )
-            };
-            player.digging(*playerNeighbor);
-
-            break;
-        }
-        case Direction::RIGHT :{
-            x += 1;
-            auto playerNeighbor{std::find_if(map.begin(), map.end(),
-                    [x,y](const Cell &cell) {return (cell.positions.x == x && cell.positions.y == y);}
-                )
-            };
-            player.digging(*playerNeighbor);
-            break;
-        }
-
-        case Direction::DOWN :{
-            y += 1;
-            auto playerNeighbor{std::find_if(map.begin(), map.end(),
-                    [x,y](const Cell &cell) {return (cell.positions.x == x && cell.positions.y == y);}
-                )
-            };
-            player.digging(*playerNeighbor);
-
-            break;
-        }
-        case Direction::LEFT :{
-            x -= 1;
-            auto playerNeighbor{std::find_if(map.begin(), map.end(),
-                    [x,y](const Cell &cell) {return (cell.positions.x == x && cell.positions.y == y);}
-                )
-            };
-            player.digging(*playerNeighbor);
-
-            break;
-        }
-        default:{
-            break;}
-        }
-	}
+/* Error handling function */
+void onError(int error, const char *description)
+{
+    std::cout << "GLFW Error (" << error << ") : " << description << std::endl;
 }
+
+
+void onWindowResized(GLFWwindow * /*window*/, int width, int height) {
+    aspectRatio = width / (float)height;
+    glViewport(0, 0, width, height);
+
+    if(aspectRatio > 1.0) {
+        myEngine.set2DProjection(-GL_VIEW_SIZE * aspectRatio / 2., GL_VIEW_SIZE * aspectRatio / 2., -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.);
+    } else {
+        myEngine.set2DProjection(-GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2., -GL_VIEW_SIZE / (2. * aspectRatio), GL_VIEW_SIZE / (2. * aspectRatio));
+    }
+}
+
+/*
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_PRESS || action == GLFW_REPEAT)
+    {
+        switch (key)
+        {
+        case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(window, GL_TRUE);
+            break;
+        case GLFW_KEY_W:
+            angle_phy += 1.0f;
+            break;
+        case GLFW_KEY_S:
+            angle_phy -= 1.0f;
+            break;
+        case GLFW_KEY_A:
+            angle_theta -= 1.0f;
+            break;
+        case GLFW_KEY_D:
+            angle_theta += 1.0f;
+            break;
+        case GLFW_KEY_UP:
+            dist_zoom *=0.9f;
+            break;
+        case GLFW_KEY_DOWN:
+            dist_zoom *= 1.1f;
+            break;
+        default:
+            break;
+        }
+    }
+}*/
+
+void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods*/)
+{
+    // int isPressed = (action == GLFW_PRESS);
+    switch (key)
+    {
+    case GLFW_KEY_A: // equals to q because well qwerty and azerty keyboards are different
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+        break;
+
+    default:
+        break;
+    }
+};
 
 int main()
 {
-    ABCD();
-    // std::vector<std::vector<unsigned int>> oldMap{generateMap(10, 10)};
-    map = generateMap(10, 10);
-    displayMap(map);
-    std::cout << std::endl;
+    // Initialize the library
+    if (!glfwInit())
+    {
+        return -1;
+    }
 
-    std::vector<Cell> newMap{};
-    newMap = generateCellularMap(map, 4);
+    /* Callback to a function if an error is rised by GLFW */
+    glfwSetErrorCallback(onError);
 
-    displayMap(newMap);
+    // Create a windowed mode window and its OpenGL context
+    GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGLTemplate", nullptr, nullptr);
+    if (!window)
+    {
+        glfwTerminate();
+        return -1;
+    }
+
+    // -- Callbacks --
+    glfwSetWindowSizeCallback(window, onWindowResized);
+
+    // Make the window's context current
+    glfwMakeContextCurrent(window);
+
+    // Intialize glad (loads the OpenGL functions)
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        return -1;
+    }
+
+    // Initialize Rendering Engine
+    myEngine.initGL();
+
+    onWindowResized(window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    //glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, onKey);
+
+    initScene();
+
+    /* Loop until the user closes the window */
+    while (!glfwWindowShouldClose(window))
+    {
+        /* Get time (in second) at loop beginning */
+        double startTime = glfwGetTime();
+
+        /* Render here */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+
+        /* Fix camera position */
+        /*myEngine.mvMatrixStack.loadIdentity();
+        Vector3D pos_camera = Vector3D(dist_zoom * cos(deg2rad(angle_theta)) * cos(deg2rad(angle_phy)),
+                                       dist_zoom * sin(deg2rad(angle_theta)) * cos(deg2rad(angle_phy)),
+                                       dist_zoom * sin(deg2rad(angle_phy)));
+
+        Vector3D viewed_point = Vector3D(0.0f, 0.0f, 0.0f);
+        Vector3D up_vector = Vector3D(0.0f, 0.0f, 1.0f);
+        Matrix4D view_matrix = Matrix4D::lookAt(pos_camera, viewed_point, up_vector);
+        myEngine.setViewMatrix(view_matrix);
+        myEngine.updateMvMatrix();*/
+
+        renderScene();
+
+        /* Swap front and back buffers */
+        glfwSwapBuffers(window);
+
+        /* Poll for and process events */
+        glfwPollEvents();
+
+        /* Elapsed time computation from loop begining */
+        double elapsedTime = glfwGetTime() - startTime;
+        /* If to few time is spend vs our wanted FPS, we wait */
+        while (elapsedTime < FRAMERATE_IN_SECONDS)
+        {
+            glfwWaitEventsTimeout(FRAMERATE_IN_SECONDS - elapsedTime);
+            elapsedTime = glfwGetTime() - startTime;
+        }
+    }
+
+    glfwTerminate();
     return 0;
 }

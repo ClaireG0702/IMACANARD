@@ -1,52 +1,17 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.20)
+project(IMACANARD)
 
-cmake_path(GET CMAKE_CURRENT_SOURCE_DIR FILENAME FolderName)   
-string(REPLACE " " "_" FolderName ${FolderName})
+file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS src/*)
+add_executable(${PROJECT_NAME} ${MY_SOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE src/)
 
-project(${FolderName}_Project)
+# Set the folder where the executable will be created
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+# Librairies
 
-if (MSVC)
-    add_compile_options(/W3)
-else()
-    # add_compile_options(-Wall -Wextra -Wpedantic -pedantic-errors)
-    add_compile_options(-Wall -Wextra)
-endif()
-
-file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "src/*.cpp")
-file(GLOB_RECURSE SRC_MAIN_FILES CONFIGURE_DEPENDS "src/main*.cpp")
-
-# # Filter out main files
-# list(FILTER SRC_FILES EXCLUDE REGEX "src/main_.*.cpp")
-
-# Remove main files from SRC_FILES
-foreach(SRC_MAIN_FILE ${SRC_MAIN_FILES})
-    list(REMOVE_ITEM SRC_FILES ${SRC_MAIN_FILE})
-endforeach()
-
-message(STATUS "SRC_FILES: ")
-foreach(SRC_FILE ${SRC_FILES})
-    message(STATUS "    ${SRC_FILE}")
-endforeach()
-
-message(STATUS "SRC_MAIN_FILES: ")
-foreach(SRC_MAIN_FILE ${SRC_MAIN_FILES})
-    message(STATUS "    ${SRC_MAIN_FILE}")
-endforeach()
-
-foreach(SRC_MAIN_FILE ${SRC_MAIN_FILES})
-    get_filename_component(SRC_MAIN_FILE_NAME ${SRC_MAIN_FILE} NAME)
-    string(REPLACE ".cpp" "" SRC_MAIN_FILE_NAME ${SRC_MAIN_FILE_NAME})
-    string(REPLACE "main_" "" SRC_MAIN_FILE_NAME ${SRC_MAIN_FILE_NAME})
-
-    message(STATUS "Creating executable: ${SRC_MAIN_FILE_NAME}")
-    add_executable(${SRC_MAIN_FILE_NAME} ${SRC_MAIN_FILE} ${SRC_FILES})
-    target_compile_features(${SRC_MAIN_FILE_NAME} PRIVATE cxx_std_20)
-    target_include_directories(${SRC_MAIN_FILE_NAME} PRIVATE "src/")
-endforeach()
-
-# Add Libraries
+# ---Add glbasimac---
 include(FetchContent)
 FetchContent_Declare(
     glm
@@ -54,30 +19,10 @@ FetchContent_Declare(
     GIT_TAG efec5db081e3aad807d0731e172ac597f6a39447
 )
 FetchContent_MakeAvailable(glm)
-target_link_libraries(main PUBLIC glm)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm)
 
-# ---Add GL---
-find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIR})
-set(ALL_LIBRARIES ${OPENGL_LIBRARIES})
+add_subdirectory(lib/glbasimac)
+target_link_libraries(${PROJECT_NAME} PRIVATE glbasimac)
 
-# ---Add GLFW---
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
-add_subdirectory(third_party/glfw)
-set(ALL_LIBRARIES ${ALL_LIBRARIES} glfw)
-
-# ---Add glad---
-add_library(glad third_party/glad/src/glad.c)
-include_directories(third_party/glad/include)
-set(ALL_LIBRARIES ${ALL_LIBRARIES} glad)
-
-# ---Add glbasimac---
-add_subdirectory(third_party/glbasimac)
-set(ALL_LIBRARIES ${ALL_LIBRARIES} glbasimac)
-include_directories(third_party/glbasimac/)
-set(CMAKE_COLOR_MAKEFILE ON)
-
-target_link_libraries(main PUBLIC ${ALL_LIBRARIES})
+include(CmakeUtils/files_and_folders.cmake)
+Cool__target_copy_folder(${PROJECT_NAME} "assets")
