@@ -83,8 +83,6 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
     case GLFW_KEY_A: // equals to q because well qwerty and azerty keyboards are different
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         break;
-    case GLFW_KEY_T:
-        drawCell(0, 0, 0, 0.1, 0.1);
     default:
         break;
     }

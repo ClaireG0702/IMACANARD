@@ -20,10 +20,10 @@ void initScene()
     map = generateMap(WIDTH, WIDTH);
     map = generateCellularMap(map, 4);
 
-    initAllSquares(map);
+    initMap(map);
     // displayBasicMap(map);
 
-    // TODO : definie positions of obstacles
+    // TODO : define positions of obstacles
     // TODO : define positions of player (center of the map)
     // TODO : define positions of enemies
 }
@@ -42,8 +42,11 @@ void initScene()
     return 0;
 }*/
 
-void drawCell(float const value, float const x, float const y, float cellWidth, float cellHeight)
+// create a standard mesh pointer to add coordinates of the cell based on it's size and placement
+// TODO : delete the pointer somewhere
+StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight)
 {
+    StandardMesh *cellPointer = new StandardMesh(4, GL_TRIANGLE_FAN);
     std::vector<float> squareCoords{
         x, y,                          // Bottom Left
         x + cellWidth, y,              // Bottom Right
@@ -51,84 +54,37 @@ void drawCell(float const value, float const x, float const y, float cellWidth, 
         x, y + cellHeight              // Top Left
     };
 
-    square.initShape(squareCoords);
-    if (value == 0)
+    cellPointer->addOneBuffer(0, 2, squareCoords.data(), "coordinates", true);
+    return cellPointer;
+}
+
+//
+void setTypeCell(Cell const &cell)
+{
+    switch (cell.value)
     {
+    case 0:
         myEngine.setFlatColor(0, 1, 0); // Green
-    }
-    else
-    {
+        break;
+    case 1:
         myEngine.setFlatColor(0, 0, 1); // Blue
-    }
-    square.changeNature(GL_TRIANGLE_FAN);
-    square.drawShape();
-};
-void displayBasicMap(std::vector<Cell> const &map)
-{
-    int width, height;
-    glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
-
-    float rows{map.back().positions.y}; // number of rows same as last y ↕
-    float cols{map.back().positions.x}; // number of cols same as last x ↔
-
-    float worldWidth = 1.0;
-    float worldHeight = 1.0;
-
-    float cellWidth = worldWidth / cols;
-    float cellHeight = worldHeight / rows;
-
-    for (Cell const &cell : map)
-    {
-        std::cout << "row " << cell.positions.y << ", col " << cell.positions.x << std::endl;
-        std::cout << "value " << cell.value << std::endl;
-        int row{static_cast<int>(cell.positions.y)}; // which row we are on ↕
-        int col{static_cast<int>(cell.positions.x)}; // which col we are on ↔
-
-        float x{-worldWidth / 2.0f + col * cellWidth};
-        float y{-worldHeight / 2.0f + row * cellHeight};
-        std::cout << "new x " << x << ", new y " << y << std::endl;
-        std::cout << "cellWidth " << cellWidth << ", cellHeight " << cellHeight << std::endl;
-
-        drawCell(cell.value, x, y, cellWidth, cellHeight);
+        break;
+    default:
+        myEngine.setFlatColor(0, 0, 0); // Default
+        break;
     }
 }
 
-StandardMesh *createSMsquare(float const x, float const y, float cellWidth, float cellHeight)
+void initCell(Cell &cell, float const x, float const y, float cellWidth, float cellHeight)
 {
-    StandardMesh *squareSM = new StandardMesh(4, GL_TRIANGLE_STRIP);
-    std::vector<float> squareCoords{
-        x, y, 0,                          // Bottom Left
-        x + cellWidth, y, 0,              // Bottom Right
-        x + cellWidth, y + cellHeight, 0, // Top Right
-        x, y + cellHeight, 0              // Top Left
-    };
-
-    squareSM->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
-    return squareSM;
-}
-
-void drawTest(Cell const &cell)
-{
-    if (cell.value == 0)
-    {
-        myEngine.setFlatColor(0, 1, 0); // Green
-    }
-    else
-    {
-        myEngine.setFlatColor(0, 0, 1); // Blue
-    }
-}
-
-void initTest(float const x, float const y, float cellWidth, float cellHeight, Cell &cell)
-{
-    cell.square = createSMsquare(x, y, cellWidth, cellHeight);
+    cell.square = createCellBuffer(x, y, cellWidth, cellHeight); // the cell's square have a buffer with it's coordinates
     cell.square->createVAO();
 };
 
-void initAllSquares(std::vector<Cell> &map)
+void initMap(std::vector<Cell> &map)
 {
-    int width, height;
-    glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
+    // int width, height;
+    // glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
 
     float rows{map.back().positions.y}; // number of rows same as last y ↕
     float cols{map.back().positions.x}; // number of cols same as last x ↔
@@ -141,32 +97,25 @@ void initAllSquares(std::vector<Cell> &map)
         int col{static_cast<int>(cell.positions.x)}; // which row we are on ↕
         int row{static_cast<int>(cell.positions.y)}; // which col we are on ↔
 
-        float x{-1 / 2.0f + col * cellWidth};
-        float y{-1 / 2.0f + row * cellHeight};
+        float x{-1 / 2.0f + col * cellWidth};  // to transform it to -1/1 coordinates
+        float y{-1 / 2.0f + row * cellHeight}; // to transform it to -1/1 coordinates
 
-        initTest(x, y, cellWidth, cellHeight, cell);
+        initCell(cell, x, y, cellWidth, cellHeight); // to initialize a cell
     }
 };
 
-void drawInitAllSquares(std::vector<Cell> const &map)
+void drawBaseMap(std::vector<Cell> const &map)
 {
     for (Cell const &cell : map)
     {
-        drawTest(cell);
+        setTypeCell(cell);
         cell.square->draw();
     };
 }
 
-bool mapGenerated{false};
-
 void renderScene()
 {
-    // if (!mapGenerated)
-    // {
-    //     displayBasicMap(map);
-    //     mapGenerated = true;
-    // }
-    drawInitAllSquares(map);
+    drawBaseMap(map);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
