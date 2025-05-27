@@ -1,5 +1,9 @@
 #pragma once
 
+#include "player.hpp"
+#include "enemy.hpp"
+#include "map.hpp"
+
 // ce qui y a en commun avec enemy et player
 // déplacement ?
 // ne pas passer à travers les blocs pleins
@@ -14,3 +18,5 @@ je calcule position possible + est ce que dans les 4 tuiles possibles y en a 1 q
     - si oui : j'avance
     - si non : je bouge pas ou action
 */
+
+void updatePlayerPosition(std::vector<Cell> &map, int cellSize, Player &player);

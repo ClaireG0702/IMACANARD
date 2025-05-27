@@ -39,3 +39,5 @@ void initTest(float const x, float const y, float cellWidth, float cellHeight, C
 void drawTest(Cell const &cell, STP3D::StandardMesh *testSquare);
 void initAllSquares(std::vector<Cell> &map);
 void drawInitAllSquares(std::vector<Cell> const &map);
+void initAllCharacters(Player &player, std::vector<Cell> &map);
+void drawAllCharacters(Player &player);

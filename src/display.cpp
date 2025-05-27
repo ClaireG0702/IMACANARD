@@ -21,6 +21,7 @@ void initScene()
     map = generateCellularMap(map, 4);
 
     initAllSquares(map);
+    initAllCharacters(player, map);
     // displayBasicMap(map);
 
     // TODO : definie positions of obstacles
@@ -95,7 +96,7 @@ void displayBasicMap(std::vector<Cell> const &map)
 
 StandardMesh *createSMsquare(float const x, float const y, float cellWidth, float cellHeight)
 {
-    StandardMesh *squareSM = new StandardMesh(4, GL_TRIANGLE_STRIP);
+    StandardMesh *squareSM = new StandardMesh(4, GL_TRIANGLE_FAN);
     std::vector<float> squareCoords{
         x, y, 0,                          // Bottom Left
         x + cellWidth, y, 0,              // Bottom Right
@@ -148,6 +149,15 @@ void initAllSquares(std::vector<Cell> &map)
     }
 };
 
+void initAllCharacters(Player &player, std::vector<Cell> &map)
+{
+    // Initialize player position
+    initPlayer(player, map);
+
+    player.square = createSMsquare(player.position.x, player.position.y, 0.1f, 0.1f);
+    player.square->createVAO();
+}
+
 void drawInitAllSquares(std::vector<Cell> const &map)
 {
     for (Cell const &cell : map)
@@ -155,6 +165,13 @@ void drawInitAllSquares(std::vector<Cell> const &map)
         drawTest(cell);
         cell.square->draw();
     };
+}
+
+void drawAllCharacters(Player &player)
+{
+    // Draw player
+    myEngine.setFlatColor(1, 0, 0); // Red
+    player.square->draw();
 }
 
 bool mapGenerated{false};
@@ -167,6 +184,7 @@ void renderScene()
     //     mapGenerated = true;
     // }
     drawInitAllSquares(map);
+    drawAllCharacters(player);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -199,9 +217,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
             y -= 1;
 
-            auto playerNeighbor{std::find_if(map.begin(), map.end(),
-                                             [x, y](const Cell &cell)
-                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                { return (cell.positions.x == x && cell.positions.y == y); }
+            )};
             player.digging(*playerNeighbor);
 
             break;
@@ -209,9 +227,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         case Direction::RIGHT:
         {
             x += 1;
-            auto playerNeighbor{std::find_if(map.begin(), map.end(),
-                                             [x, y](const Cell &cell)
-                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                { return (cell.positions.x == x && cell.positions.y == y); }
+            )};
             player.digging(*playerNeighbor);
             break;
         }
@@ -219,9 +237,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         case Direction::DOWN:
         {
             y += 1;
-            auto playerNeighbor{std::find_if(map.begin(), map.end(),
-                                             [x, y](const Cell &cell)
-                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                { return (cell.positions.x == x && cell.positions.y == y); }
+            )};
             player.digging(*playerNeighbor);
 
             break;
@@ -229,9 +247,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         case Direction::LEFT:
         {
             x -= 1;
-            auto playerNeighbor{std::find_if(map.begin(), map.end(),
-                                             [x, y](const Cell &cell)
-                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                { return (cell.positions.x == x && cell.positions.y == y); }
+            )};
             player.digging(*playerNeighbor);
 
             break;
