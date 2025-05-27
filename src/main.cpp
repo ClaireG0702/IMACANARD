@@ -1,7 +1,7 @@
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
-//#include "draw_scene.hpp"
+// #include "draw_scene.hpp"
 #include "tools/matrix_stack.hpp"
 #include "includes/display.hpp"
 #include <iostream>
@@ -26,14 +26,17 @@ void onError(int error, const char *description)
     std::cout << "GLFW Error (" << error << ") : " << description << std::endl;
 }
 
-
-void onWindowResized(GLFWwindow * /*window*/, int width, int height) {
+void onWindowResized(GLFWwindow * /*window*/, int width, int height)
+{
     aspectRatio = width / (float)height;
     glViewport(0, 0, width, height);
 
-    if(aspectRatio > 1.0) {
+    if (aspectRatio > 1.0)
+    {
         myEngine.set2DProjection(-GL_VIEW_SIZE * aspectRatio / 2., GL_VIEW_SIZE * aspectRatio / 2., -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.);
-    } else {
+    }
+    else
+    {
         myEngine.set2DProjection(-GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2., -GL_VIEW_SIZE / (2. * aspectRatio), GL_VIEW_SIZE / (2. * aspectRatio));
     }
 }
@@ -80,7 +83,8 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
     case GLFW_KEY_A: // equals to q because well qwerty and azerty keyboards are different
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         break;
-
+    case GLFW_KEY_T:
+        drawCell(0, 0, 0, 0.1, 0.1);
     default:
         break;
     }
@@ -98,7 +102,7 @@ int main()
     glfwSetErrorCallback(onError);
 
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGLTemplate", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "IMACANARD", nullptr, nullptr);
     if (!window)
     {
         glfwTerminate();
@@ -122,7 +126,7 @@ int main()
 
     onWindowResized(window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    //glfwSetKeyCallback(window, key_callback);
+    // glfwSetKeyCallback(window, key_callback);
     glfwSetKeyCallback(window, onKey);
 
     initScene();
@@ -134,6 +138,8 @@ int main()
         double startTime = glfwGetTime();
 
         /* Render here */
+
+        glClearColor(0.f, 0.0f, 0.2f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
 

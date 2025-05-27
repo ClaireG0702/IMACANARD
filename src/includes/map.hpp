@@ -7,6 +7,9 @@
 #include <array>
 #include <numeric>
 
+// for blocks
+#include "tools/basic_mesh.hpp"
+
 // for map display
 #include <iostream>
 
@@ -14,7 +17,7 @@
 #include <cstdlib>
 #include <ctime>
 
-// génération map
+// map generation
 #include "glm/fwd.hpp"
 #include <glm/gtx/matrix_transform_2d.hpp>
 
@@ -63,6 +66,7 @@ struct Cell
 {
     glm::vec2 positions; // x,y
     unsigned int value;
+    STP3D::StandardMesh *square;
 };
 
 struct CellDirection

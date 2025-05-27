@@ -8,6 +8,7 @@
 #include "glbasimac/glbi_set_of_points.hpp"
 #include "glbasimac/glbi_convex_2D_shape.hpp"
 #include "tools/matrix_stack.hpp"
+#include "tools/basic_mesh.hpp"
 
 #include "player.hpp"
 #include "map.hpp"
@@ -30,3 +31,11 @@ int ABCD();
 
 void initScene();
 void renderScene();
+void drawCell(float const value, float const x, float const y, float cellWidth, float cellHeight);
+void displayBasicMap(std::vector<Cell> const &map);
+
+StandardMesh *createSMsquare(float const x, float const y, float cellWidth, float cellHeight);
+void initTest(float const x, float const y, float cellWidth, float cellHeight, Cell &cell);
+void drawTest(Cell const &cell, STP3D::StandardMesh *testSquare);
+void initAllSquares(std::vector<Cell> &map);
+void drawInitAllSquares(std::vector<Cell> const &map);
