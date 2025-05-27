@@ -31,13 +31,11 @@ int ABCD();
 
 void initScene();
 void renderScene();
-void drawCell(float const value, float const x, float const y, float cellWidth, float cellHeight);
-void displayBasicMap(std::vector<Cell> const &map);
 
-StandardMesh *createSMsquare(float const x, float const y, float cellWidth, float cellHeight);
-void initTest(float const x, float const y, float cellWidth, float cellHeight, Cell &cell);
-void drawTest(Cell const &cell, STP3D::StandardMesh *testSquare);
-void initAllSquares(std::vector<Cell> &map);
-void drawInitAllSquares(std::vector<Cell> const &map);
+StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight);
+void setTypeCell(Cell const &cell);
+void initCell(Cell &cell, float const x, float const y, float cellWidth, float cellHeight);
+void initMap(std::vector<Cell> &map);
+void drawBaseMap(std::vector<Cell> const &map);
 void initAllCharacters(Player &player, std::vector<Cell> &map);
 void drawAllCharacters(Player &player);
