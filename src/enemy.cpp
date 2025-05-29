@@ -6,7 +6,7 @@
 #include <queue>
 #include <climits>
 
-void initEnemies(std::vector<Enemy> enemies, std::vector<Cell> &map) {
+void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map) {
     for(Enemy& enemy: enemies) {
         Cell* cell = nullptr;
         while(!cell) {

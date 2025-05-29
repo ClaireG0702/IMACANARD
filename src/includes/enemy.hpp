@@ -15,7 +15,7 @@ struct Enemy {
     STP3D::StandardMesh *square;
 };
 
-void initEnemies(std::vector<Enemy> enemies, std::vector<Cell> &map);
+void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map);
 void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap);
 
 std::vector<Cell> createValuedMap(std::vector<Cell> &map, Player &posPlayer);
