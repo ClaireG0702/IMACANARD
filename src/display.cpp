@@ -215,7 +215,7 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
 void renderScene()
 {
     // drawTexturedBaseMap(map, allTextures);
-    drawInitBaseMap(map);
+    drawBaseMap(map);
     drawAllCharacters(player);
 }
 

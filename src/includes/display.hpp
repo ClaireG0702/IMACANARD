@@ -39,7 +39,7 @@ GLBI_Texture createOneTexture(const char *filename);
 void setTypeCell(Cell const &cell);
 void initCell(Cell &cell, float const x, float const y, float cellWidth, float cellHeight);
 void initMap(std::vector<Cell> &map);
-void drawInitBaseMap(std::vector<Cell> const &map);
+void drawBaseMap(std::vector<Cell> const &map);
 GLBI_Texture setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures);
 
 void initAllCharacters(Player &player, std::vector<Cell> &map);
