@@ -84,6 +84,14 @@ void onKey(GLFWwindow *window, int key, int scancode, int action, int mods)
     case GLFW_KEY_A: // equals to q because well qwerty and azerty keyboards are different
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         break;
+
+    case GLFW_KEY_T:
+        myEngine.activateTexturing(true);
+        break;
+
+    case GLFW_KEY_Y:
+        myEngine.activateTexturing(false);
+        break;
     default:
         break;
     }
