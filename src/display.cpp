@@ -174,14 +174,14 @@ void initAllCharacters(Player &player, std::vector<Cell> &map)
     player.square = createCellBuffer(x, y, cellSize/2, cellSize/2, 1.0f);
     player.square->createVAO();
 
-    enemies = std::vector<Enemy>(2);
+    /*enemies = std::vector<Enemy>(2);
     initEnemies(enemies, map);
     for(Enemy& enemy: enemies) {
         float ex = -0.5f + enemy.position.x * cellSize;
         float ey = -0.5f + enemy.position.y * cellSize;
         enemy.square = createCellBuffer(ex, ey, cellSize / 2, cellSize / 2, 1.0f);
         enemy.square->createVAO();
-    }
+    }*/
 }
 
 void updatePlayerMesh(Player &player, float cellSize)
@@ -293,10 +293,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
         case Direction::UP:
         {
-            y -= 1;
+            y += 1;
 
             auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+                { return (cell.positions.x == x && cell.positions.y == y); })};
             player.digging(*playerNeighbor);
 
             break;
@@ -305,16 +305,16 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
             x += 1;
             auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+                { return (cell.positions.x == x && cell.positions.y == y); })};
             player.digging(*playerNeighbor);
             break;
         }
 
         case Direction::DOWN:
         {
-            y += 1;
+            y -= 1;
             auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+                { return (cell.positions.x == x && cell.positions.y == y); })};
             player.digging(*playerNeighbor);
 
             break;
@@ -323,7 +323,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
             x -= 1;
             auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+                { return (cell.positions.x == x && cell.positions.y == y); })};
             player.digging(*playerNeighbor);
 
             break;
