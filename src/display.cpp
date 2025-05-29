@@ -8,8 +8,9 @@ static const float GL_VIEW_SIZE = 1.0;
 /* OpenGL Engine */
 GLBI_Engine myEngine;
 
-#define WIDTH 10
+#define WIDTH 25
 std::vector<Cell> map; // the map to be displayed
+#define CELLSIZE 1 / map.back().positions.x
 
 GLBI_Convex_2D_Shape square; // the square to be placed
 // StandardMesh *testSquare;
@@ -21,6 +22,7 @@ void initScene()
     map = generateCellularMap(map, 4);
 
     initMap(map);
+    initAllCharacters(player, map);
     // displayBasicMap(map);
 
     // TODO : define positions of obstacles
@@ -44,17 +46,17 @@ void initScene()
 
 // create a standard mesh pointer to add coordinates of the cell based on it's size and placement
 // TODO : delete the pointer somewhere
-StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight)
+StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight, float z)
 {
     StandardMesh *cellPointer = new StandardMesh(4, GL_TRIANGLE_FAN);
     std::vector<float> squareCoords{
-        x, y,                          // Bottom Left
-        x + cellWidth, y,              // Bottom Right
-        x + cellWidth, y + cellHeight, // Top Right
-        x, y + cellHeight              // Top Left
+        x, y, z,                          // Bottom Left
+        x + cellWidth, y, z,              // Bottom Right
+        x + cellWidth, y + cellHeight, z, // Top Right
+        x, y + cellHeight, z              // Top Left
     };
 
-    cellPointer->addOneBuffer(0, 2, squareCoords.data(), "coordinates", true);
+    cellPointer->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
     return cellPointer;
 }
 
@@ -77,7 +79,7 @@ void setTypeCell(Cell const &cell)
 
 void initCell(Cell &cell, float const x, float const y, float cellWidth, float cellHeight)
 {
-    cell.square = createCellBuffer(x, y, cellWidth, cellHeight); // the cell's square have a buffer with it's coordinates
+    cell.square = createCellBuffer(x, y, cellWidth, cellHeight, 0.f); // the cell's square have a buffer with it's coordinates
     cell.square->createVAO();
 };
 
@@ -109,11 +111,29 @@ void initAllCharacters(Player &player, std::vector<Cell> &map)
     // Initialize player position
     initPlayer(player, map);
 
-    player.square = createCellBuffer(player.position.x, player.position.y, 0.1f, 0.1f);
+    float cellSize = 1 / map.back().positions.x; // size of a cell based on the number of columns
+    float x = -1 / 2.0f + player.position.x * cellSize;
+    float y = -1 / 2.0f + player.position.y * cellSize;
+
+    player.square = createCellBuffer(x, y, cellSize/2, cellSize/2, 1.0f);
     player.square->createVAO();
 }
 
-void drawInitBaseMap(std::vector<Cell> const &map)
+void updatePlayerMesh(Player &player, float cellSize)
+{
+    float x = -0.5f + player.position.x * cellSize;
+    float y = -0.5f + player.position.y * cellSize;
+
+    // Supprimer l'ancien mesh
+    if (player.square != nullptr)
+        delete player.square;
+
+    player.square = createCellBuffer(x, y, cellSize / 2.0f, cellSize / 2.0f, 1.0f);
+    player.square->createVAO();
+}
+
+
+void drawBaseMap(std::vector<Cell> const &map)
 {
     for (Cell const &cell : map)
     {
@@ -124,7 +144,6 @@ void drawInitBaseMap(std::vector<Cell> const &map)
 
 void drawAllCharacters(Player &player)
 {
-    // Draw player
     myEngine.setFlatColor(1, 0, 0); // Red
     player.square->draw();
 }
@@ -142,18 +161,26 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
         player.direction = Direction::UP;
+        updatePlayerPosition(map, CELLSIZE, player);
+        updatePlayerMesh(player, CELLSIZE);
     }
     if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
         player.direction = Direction::DOWN;
+        updatePlayerPosition(map, CELLSIZE, player);
+        updatePlayerMesh(player, CELLSIZE);
     }
     if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
         player.direction = Direction::LEFT;
+        updatePlayerPosition(map, CELLSIZE, player);
+        updatePlayerMesh(player, CELLSIZE);
     }
     if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
         player.direction = Direction::RIGHT;
+        updatePlayerPosition(map, CELLSIZE, player);
+        updatePlayerMesh(player, CELLSIZE);
     }
 
     if (key == GLFW_KEY_Q && (action == GLFW_PRESS || action == GLFW_REPEAT))

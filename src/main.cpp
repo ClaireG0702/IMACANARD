@@ -75,9 +75,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     }
 }*/
 
-void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods*/)
+void onKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     // int isPressed = (action == GLFW_PRESS);
+    key_callback(window, key, scancode, action, mods);
     switch (key)
     {
     case GLFW_KEY_A: // equals to q because well qwerty and azerty keyboards are different
@@ -139,7 +140,7 @@ int main()
 
         glClearColor(0.f, 0.0f, 0.2f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
 
         /* Fix camera position */
         /*myEngine.mvMatrixStack.loadIdentity();

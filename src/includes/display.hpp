@@ -11,6 +11,7 @@
 #include "tools/basic_mesh.hpp"
 
 #include "player.hpp"
+#include "character.hpp"
 #include "map.hpp"
 
 #include <iostream>
@@ -39,3 +40,5 @@ void initMap(std::vector<Cell> &map);
 void drawBaseMap(std::vector<Cell> const &map);
 void initAllCharacters(Player &player, std::vector<Cell> &map);
 void drawAllCharacters(Player &player);
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
