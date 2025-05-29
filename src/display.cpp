@@ -1,5 +1,8 @@
 #include "includes/display.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "tools/stb_image.h"
+
 /* Minimal time wanted between two images */
 static const double FRAMERATE_IN_SECONDS = 1. / 30.;
 static float aspectRatio = 1.0f;
@@ -11,36 +14,23 @@ GLBI_Engine myEngine;
 #define WIDTH 10
 std::vector<Cell> map; // the map to be displayed
 
-GLBI_Convex_2D_Shape square; // the square to be placed
-// StandardMesh *testSquare;
 Player player{};
+std::vector<GLBI_Texture> allTextures{};
 
 void initScene()
 {
     map = generateMap(WIDTH, WIDTH);
     map = generateCellularMap(map, 4);
 
+    allTextures = initTextures();
     initMap(map);
+    initAllCharacters(player, map);
     // displayBasicMap(map);
 
     // TODO : define positions of obstacles
     // TODO : define positions of player (center of the map)
     // TODO : define positions of enemies
 }
-/*int main() ----> old main the definition here need to be done on initScene
-{
-    ABCD();
-    // std::vector<std::vector<unsigned int>> oldMap{generateMap(10, 10)};
-    map = generateMap(10, 10);
-    displayMap(map);
-    std::cout << std::endl;
-
-    std::vector<Cell> newMap{};
-    newMap = generateCellularMap(map, 4);
-
-    displayMap(newMap);
-    return 0;
-}*/
 
 // create a standard mesh pointer to add coordinates of the cell based on it's size and placement
 // TODO : delete the pointer somewhere
@@ -58,7 +48,71 @@ StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, fl
     return cellPointer;
 }
 
-//
+GLBI_Texture createOneTexture(const char *filename)
+{
+    int x{};
+    int y{};
+    int n{};
+
+    unsigned char *pixels{stbi_load(filename, &x, &y, &n, 0)};
+    std::cout << "Image " << filename << (pixels != nullptr ? "" : " not") << " loaded." << std::endl;
+
+    GLBI_Texture texture{};
+    texture.createTexture();
+    texture.attachTexture();
+    texture.setParameters(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    texture.loadImage(x, y, n, pixels);
+    texture.detachTexture();
+    stbi_image_free(pixels);
+
+    return texture;
+};
+
+std::vector<GLBI_Texture> initTextures()
+{
+    std::vector<GLBI_Texture> allTextures{};
+
+    std::array<char const *, 4> filenames{"assets/images/water.png",
+                                          "assets/images/yellow_ducky.png",
+                                          "assets/images/brown_ducky.png",
+                                          "assets/images/error.png"};
+
+    for (char const *filename : filenames)
+    {
+        GLBI_Texture texture{};
+        texture = createOneTexture(filename);
+
+        allTextures.push_back(texture);
+    }
+
+    return allTextures;
+}
+
+GLBI_Texture setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures)
+{
+    GLBI_Texture cellTexture{};
+
+    switch (cell.value)
+    {
+    // TODO : find out how to use specific sprites
+    case 0:
+        cellTexture = allTextures[0];
+        break;
+    case 1:
+        cellTexture = allTextures[1];
+        break;
+    case 2:
+        cellTexture = allTextures[2];
+        break;
+
+    default:
+        cellTexture = allTextures[3]; // error
+        break;
+    }
+
+    return cellTexture;
+};
+
 void setTypeCell(Cell const &cell)
 {
     switch (cell.value)
@@ -129,11 +183,21 @@ void drawAllCharacters(Player &player)
     player.square->draw();
 }
 
-bool mapGenerated{false};
+void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures)
+{
+    for (Cell const &cell : map)
+    {
+        GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
+        cellTexture.attachTexture();
+        cell.square->draw();
+        cellTexture.detachTexture();
+    };
+}
 
 void renderScene()
 {
-    drawBaseMap(map);
+    // drawTexturedBaseMap(map, allTextures);
+    drawInitBaseMap(map);
     drawAllCharacters(player);
 }
 
@@ -168,8 +232,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
             y -= 1;
 
             auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                { return (cell.positions.x == x && cell.positions.y == y); }
-            )};
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
             player.digging(*playerNeighbor);
 
             break;
@@ -178,8 +241,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
             x += 1;
             auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                { return (cell.positions.x == x && cell.positions.y == y); }
-            )};
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
             player.digging(*playerNeighbor);
             break;
         }
@@ -188,8 +250,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
             y += 1;
             auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                { return (cell.positions.x == x && cell.positions.y == y); }
-            )};
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
             player.digging(*playerNeighbor);
 
             break;
@@ -198,8 +259,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
             x -= 1;
             auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                { return (cell.positions.x == x && cell.positions.y == y); }
-            )};
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
             player.digging(*playerNeighbor);
 
             break;
