@@ -15,10 +15,15 @@ void Player::digging (Cell& block){ //action miner
 }
 
 void initPlayer(Player &player, std::vector<Cell> &map) {
-    Cell cell = map[std::rand() % map.size()]; // Place the player in the center of the map
-    while(cell.value != 0) { // Ensure the cell is empty
-        cell = map[std::rand() % map.size()];
+    Cell* cell = nullptr;
+    
+    while(!cell) {
+        int index = std::rand() % map.size();
+        if(map[index].value == 0) {
+            cell = &map[index];
+        }
     }
-    player.position = cell.positions; // Set player's position to the cell's position
-    player.direction = Direction::UP; // Initial direction
+
+    player.position = cell->positions; // Set player's position to the cell's position
+    player.direction = Direction::DOWN; // Initial direction
 }

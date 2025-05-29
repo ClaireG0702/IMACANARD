@@ -19,4 +19,5 @@ je calcule position possible + est ce que dans les 4 tuiles possibles y en a 1 q
     - si non : je bouge pas ou action
 */
 
-void updatePlayerPosition(std::vector<Cell> &map, int cellSize, Player &player);
+bool updatePlayerPosition(std::vector<Cell> &map, int cellSize, Player &player);
+bool checkIfPositionIsValid(std::vector<Cell> &map, int cellSize, int x, int y);

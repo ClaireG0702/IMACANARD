@@ -119,10 +119,10 @@ void setTypeCell(Cell const &cell)
     switch (cell.value)
     {
     case 0:
-        myEngine.setFlatColor(0, 1, 0); // Green
+        myEngine.setFlatColor(0, 0, 1); // Green
         break;
     case 1:
-        myEngine.setFlatColor(0, 0, 1); // Blue
+        myEngine.setFlatColor(0, 1, 0); // Blue
         break;
     default:
         myEngine.setFlatColor(0, 0, 0); // Default
@@ -221,28 +221,29 @@ void renderScene()
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
+    bool isPositionUpdated = false;
     if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
         player.direction = Direction::UP;
-        updatePlayerPosition(map, CELLSIZE, player);
-        updatePlayerMesh(player, CELLSIZE);
+        isPositionUpdated = updatePlayerPosition(map, CELLSIZE, player);
     }
     if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
         player.direction = Direction::DOWN;
-        updatePlayerPosition(map, CELLSIZE, player);
-        updatePlayerMesh(player, CELLSIZE);
+        isPositionUpdated = updatePlayerPosition(map, CELLSIZE, player);
     }
     if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
         player.direction = Direction::LEFT;
-        updatePlayerPosition(map, CELLSIZE, player);
-        updatePlayerMesh(player, CELLSIZE);
+        isPositionUpdated = updatePlayerPosition(map, CELLSIZE, player);
     }
     if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT))
     {
         player.direction = Direction::RIGHT;
-        updatePlayerPosition(map, CELLSIZE, player);
+        isPositionUpdated = updatePlayerPosition(map, CELLSIZE, player);
+    }
+
+    if(isPositionUpdated) {
         updatePlayerMesh(player, CELLSIZE);
     }
 
