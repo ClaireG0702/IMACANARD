@@ -15,15 +15,42 @@ void Player::digging (Cell& block){ //action miner
 }
 
 void initPlayer(Player &player, std::vector<Cell> &map) {
-    Cell* cell = nullptr;
-    
-    while(!cell) {
-        int index = std::rand() % map.size();
-        if(map[index].value == 0) {
-            cell = &map[index];
+    if (map.empty()) return;
+
+    // Trouver les dimensions de la carte
+    float maxX = 0, maxY = 0;
+    for (const Cell& cell : map) {
+        if (cell.positions.x > maxX) maxX = cell.positions.x;
+        if (cell.positions.y > maxY) maxY = cell.positions.y;
+    }
+
+    float centerX = maxX / 2.0f;
+    float centerY = maxY / 2.0f;
+
+    // Trouver la cellule la plus proche du centre avec value == 0
+    Cell* closestCell = nullptr;
+    float minDistance = std::numeric_limits<float>::max();
+
+    for (Cell& cell : map) {
+        if (cell.value != 0) continue;
+
+        float dx = cell.positions.x - centerX;
+        float dy = cell.positions.y - centerY;
+        float distance = dx * dx + dy * dy; // pas besoin de racine carrée ici
+
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestCell = &cell;
         }
     }
 
-    player.position = cell->positions; // Set player's position to the cell's position
-    player.direction = Direction::DOWN; // Initial direction
+    // Fallback si aucune cellule valide (devrait jamais arriver si carte bien générée)
+    if (!closestCell) {
+        int index = std::rand() % map.size();
+        player.position = map[index].positions;
+    } else {
+        player.position = closestCell->positions;
+    }
+
+    player.direction = Direction::DOWN;
 }

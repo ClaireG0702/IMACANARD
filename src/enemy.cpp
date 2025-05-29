@@ -6,6 +6,21 @@
 #include <queue>
 #include <climits>
 
+void initEnemies(std::vector<Enemy> enemies, std::vector<Cell> &map) {
+    for(Enemy& enemy: enemies) {
+        Cell* cell = nullptr;
+        while(!cell) {
+            int index = std::rand() % map.size();
+            if(map[index].value == 0) {
+                cell = &map[index];
+            }
+        }
+
+        enemy.position = cell->positions;
+        enemy.direction = Direction::DOWN;
+    }
+}
+
 std::vector<Cell> createValuedMap(std::vector<Cell> &map, Player &player) {
     std::vector<Cell> valuedMap = map; // Copie de la carte pour y stocker les coûts
 
@@ -148,4 +163,31 @@ std::vector<CellDirection> createDirectedMap(std::vector<Cell> &map) {
     }
 
     return directedMap;
+}
+
+void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap) {
+    for (Enemy& enemy : enemies) {
+        // Trouver la direction associée à la position de l'ennemi
+        auto it = std::find_if(directedMap.begin(), directedMap.end(), [&enemy](const CellDirection& cellDir) {
+            return cellDir.positions == enemy.position;
+        });
+
+        if (it != directedMap.end()) {
+            Direction dir = it->direction;
+
+            int x = enemy.position.x;
+            int y = enemy.position.y;
+
+            switch (dir) {
+                case Direction::UP:    y--; break;
+                case Direction::RIGHT: x++; break;
+                case Direction::DOWN:  y++; break;
+                case Direction::LEFT:  x--; break;
+                case Direction::NONE:  continue; // Pas de déplacement possible
+            }
+
+            enemy.position = glm::vec2(x, y);
+            enemy.direction = dir;
+        }
+    }
 }

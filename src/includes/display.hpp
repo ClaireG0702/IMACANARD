@@ -13,6 +13,7 @@
 #include "tools/basic_mesh.hpp"
 
 #include "player.hpp"
+#include "enemy.hpp"
 #include "character.hpp"
 #include "map.hpp"
 
@@ -33,7 +34,7 @@ extern GLBI_Engine myEngine;
 void initScene();
 void renderScene();
 
-StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight);
+StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight, float z);
 std::vector<GLBI_Texture> initTextures();
 GLBI_Texture createOneTexture(const char *filename);
 void setTypeCell(Cell const &cell);

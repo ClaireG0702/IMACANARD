@@ -16,6 +16,9 @@ std::vector<Cell> map; // the map to be displayed
 #define CELLSIZE 1 / map.back().positions.x
 
 Player player{};
+std::vector<Enemy> enemies;
+std::vector<CellDirection> directedMap;
+
 std::vector<GLBI_Texture> allTextures{};
 
 void initScene()
@@ -170,6 +173,15 @@ void initAllCharacters(Player &player, std::vector<Cell> &map)
 
     player.square = createCellBuffer(x, y, cellSize/2, cellSize/2, 1.0f);
     player.square->createVAO();
+
+    enemies = std::vector<Enemy>(2);
+    initEnemies(enemies, map);
+    for(Enemy& enemy: enemies) {
+        float ex = -0.5f + enemy.position.x * cellSize;
+        float ey = -0.5f + enemy.position.y * cellSize;
+        enemy.square = createCellBuffer(ex, ey, cellSize / 2, cellSize / 2, 1.0f);
+        enemy.square->createVAO();
+    }
 }
 
 void updatePlayerMesh(Player &player, float cellSize)
@@ -185,6 +197,20 @@ void updatePlayerMesh(Player &player, float cellSize)
     player.square->createVAO();
 }
 
+void updateEnemiesMesh(std::vector<Enemy> &enemies, float cellSize)
+{
+    for (Enemy &enemy : enemies)
+    {
+        float x = -0.5f + enemy.position.x * cellSize;
+        float y = -0.5f + enemy.position.y * cellSize;
+
+        if (enemy.square != nullptr)
+            delete enemy.square;
+
+        enemy.square = createCellBuffer(x, y, cellSize / 2.0f, cellSize / 2.0f, 1.0f);
+        enemy.square->createVAO();
+    }
+}
 
 void drawBaseMap(std::vector<Cell> const &map)
 {
@@ -199,6 +225,11 @@ void drawAllCharacters(Player &player)
 {
     myEngine.setFlatColor(1, 0, 0); // Red
     player.square->draw();
+
+    myEngine.setFlatColor(1,1,0);
+    for(Enemy& enemy: enemies) {
+        enemy.square->draw();
+    }
 }
 
 void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures)
@@ -214,9 +245,12 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
 
 void renderScene()
 {
-    // drawTexturedBaseMap(map, allTextures);
+    //drawTexturedBaseMap(map, allTextures);
     drawBaseMap(map);
     drawAllCharacters(player);
+
+    updateEnemies(enemies, directedMap);
+    updateEnemiesMesh(enemies, CELLSIZE);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -245,6 +279,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
     if(isPositionUpdated) {
         updatePlayerMesh(player, CELLSIZE);
+
+        auto valuedMap = createValuedMap(map, player);
+        directedMap = createDirectedMap(valuedMap);
     }
 
     if (key == GLFW_KEY_Q && (action == GLFW_PRESS || action == GLFW_REPEAT))
