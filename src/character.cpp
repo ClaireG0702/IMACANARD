@@ -1,36 +1,36 @@
 #include "includes/character.hpp"
 
-bool updatePlayerPosition(std::vector<Cell> &map, int cellSize, Player &player) {
-    int x = player.position.x, y = player.position.y;
-    bool isPlayerPositionUpdated = false;
+void updatePlayerPosition(std::vector<Cell> &map, float deltaTime, Player &player) {
+    glm::vec2 movement(0.f);
     
     switch (player.direction) {
         case Direction::UP:
-            y += 1;
+            movement.y = 1;
             break;
         case Direction::RIGHT:
-            x += 1;
+            movement.x = 1;
             break;
         case Direction::DOWN:
-            y -= 1;
+            movement.y = -1;
             break;
         case Direction::LEFT:
-            x -= 1;
+            movement.x = -1;
             break;
         default:
             break;
     }
 
-    if(checkIfPositionIsValid(map, cellSize, x, y)) {
-        player.position.x = x;
-        player.position.y = y;
-        isPlayerPositionUpdated = true;
-    }
+    glm::vec2 nextPos = player.position + movement * player.speed * deltaTime;
 
-    return isPlayerPositionUpdated;
+    int nextX = static_cast<int>(nextPos.x);
+    int nextY = static_cast<int>(nextPos.y);
+    if(checkIfPositionIsValid(map, nextX, nextY)) {
+        player.position = nextPos;
+        player.gridPos = glm::vec2(nextX, nextY);
+    }
 }
 
-bool checkIfPositionIsValid(std::vector<Cell> &map, int cellSize, int x, int y) {
+bool checkIfPositionIsValid(std::vector<Cell> &map, int x, int y) {
     // Vérifie que la position est dans la map
     if (x < map.front().positions.x || y < map.front().positions.y || x >= map.back().positions.x || y >= map.back().positions.y)
         return false;
