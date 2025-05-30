@@ -17,7 +17,7 @@ void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map) {
         }
 
         enemy.position = cell->positions;
-        enemy.direction = Direction::DOWN;
+        enemy.direction = Direction::NONE;
     }
 }
 

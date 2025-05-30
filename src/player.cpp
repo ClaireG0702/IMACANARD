@@ -52,5 +52,5 @@ void initPlayer(Player &player, std::vector<Cell> &map) {
         player.position = closestCell->positions;
     }
 
-    player.direction = Direction::DOWN;
+    player.direction = Direction::NONE;
 }
