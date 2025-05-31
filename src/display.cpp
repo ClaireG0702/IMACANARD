@@ -25,11 +25,14 @@ std::vector<CellDirection> directedMap;
 
 std::vector<GLBI_Texture> allTextures{};
 
+GLBI_Texture myTextureTest{};
+
 void initScene()
 {
     map = generateMap(WIDTH, WIDTH);
     map = generateCellularMap(map, 4);
 
+    myTextureTest = createOneTexture("assets/images/yellow_ducky.png");
     allTextures = initTextures();
     initMap(map);
     initAllCharacters(player, map);
@@ -240,17 +243,39 @@ void drawAllCharacters(Player &player)
     {
         enemy.square->draw();
     }
-}
+};
 
 void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures)
 {
+    bool test1{true};
+    bool test2{true};
     for (Cell const &cell : map)
     {
-        myEngine.activateTexturing(true);
-        GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
-        cellTexture.attachTexture();
-        cell.square->draw();
-        cellTexture.detachTexture();
+        if (test1)
+        {
+            test1 = !test1;
+            myEngine.activateTexturing(false);
+            myEngine.setFlatColor(1.0, 0.0, 1.0);
+            cell.square->draw();
+            // myEngine.activateTexturing(true);
+        }
+        else if (test2)
+        {
+            test2 != test2;
+            myEngine.activateTexturing(true);
+            GLBI_Texture cellTexture{myTextureTest};
+            cellTexture.attachTexture();
+            cell.square->draw();
+            cellTexture.detachTexture();
+        }
+        else
+        {
+            myEngine.activateTexturing(true);
+            GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
+            cellTexture.attachTexture();
+            cell.square->draw();
+            cellTexture.detachTexture();
+        }
     };
 }
 
