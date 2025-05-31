@@ -101,6 +101,8 @@ int main()
     glfwSetKeyCallback(window, onKey);
 
     initScene();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))

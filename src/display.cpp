@@ -12,7 +12,7 @@ static const float GL_VIEW_SIZE = 1.0;
 /* OpenGL Engine */
 GLBI_Engine myEngine;
 
-#define WIDTH 25
+#define WIDTH 10
 std::vector<Cell> map; // the map to be displayed
 #define CELLSIZE (1.0f / WIDTH)
 #define CHARACTERSSIZE (1.0f / (WIDTH * 2))
@@ -52,7 +52,15 @@ StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, fl
         x, y + cellHeight, z              // Top Left
     };
 
+    std::vector<float> uvs{
+        0.0f, 0.0f, // Bottom Left
+        1.0f, 0.0f, // Bottom Right
+        1.0f, 1.0f, // Top Right
+        0.0f, 1.0f  // Top Left
+    };
+
     cellPointer->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
+    cellPointer->addOneBuffer(2, 2, squareCoords.data(), "uvs", true);
     return cellPointer;
 }
 
@@ -89,7 +97,6 @@ std::vector<GLBI_Texture> initTextures()
     {
         GLBI_Texture texture{};
         texture = createOneTexture(filename);
-
         allTextures.push_back(texture);
     }
 
@@ -228,8 +235,9 @@ void drawAllCharacters(Player &player)
     myEngine.setFlatColor(1, 0, 0); // Red
     player.square->draw();
 
-    myEngine.setFlatColor(1,1,0);
-    for(Enemy& enemy: enemies) {
+    myEngine.setFlatColor(1, 1, 0);
+    for (Enemy &enemy : enemies)
+    {
         enemy.square->draw();
     }
 }
@@ -238,6 +246,7 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
 {
     for (Cell const &cell : map)
     {
+        myEngine.activateTexturing(true);
         GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
         cellTexture.attachTexture();
         cell.square->draw();
@@ -247,38 +256,50 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
 
 void renderScene()
 {
-    //drawTexturedBaseMap(map, allTextures);
-    drawBaseMap(map);
-    drawAllCharacters(player);
+    drawTexturedBaseMap(map, allTextures);
+    // drawBaseMap(map);
+    // drawAllCharacters(player);
 
-    static double lastTime = glfwGetTime();
-    double currentTime = glfwGetTime();
-    float deltaTime = static_cast<float>(currentTime - lastTime);
-    lastTime = currentTime;
+    // static double lastTime = glfwGetTime();
+    // double currentTime = glfwGetTime();
+    // float deltaTime = static_cast<float>(currentTime - lastTime);
+    // lastTime = currentTime;
 
-    updatePlayerPosition(map, deltaTime, player);
-    updatePlayerMesh(player);
-    updateEnemies(enemies, directedMap);
-    updateEnemiesMesh(enemies);
+    // updatePlayerPosition(map, deltaTime, player);
+    // updatePlayerMesh(player);
+    // updateEnemies(enemies, directedMap);
+    // updateEnemiesMesh(enemies);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-    if(action == GLFW_PRESS) {
+    if (action == GLFW_PRESS)
+    {
         activeKeys.insert(key);
-    } else if(action == GLFW_RELEASE) {
+    }
+    else if (action == GLFW_RELEASE)
+    {
         activeKeys.erase(key);
     }
 
-    if(activeKeys.count(GLFW_KEY_UP)) {
+    if (activeKeys.count(GLFW_KEY_UP))
+    {
         player.direction = Direction::UP;
-    } else if(activeKeys.count(GLFW_KEY_DOWN)) {
+    }
+    else if (activeKeys.count(GLFW_KEY_DOWN))
+    {
         player.direction = Direction::DOWN;
-    } else if(activeKeys.count(GLFW_KEY_LEFT)) {
+    }
+    else if (activeKeys.count(GLFW_KEY_LEFT))
+    {
         player.direction = Direction::LEFT;
-    } else if(activeKeys.count(GLFW_KEY_RIGHT)) {
+    }
+    else if (activeKeys.count(GLFW_KEY_RIGHT))
+    {
         player.direction = Direction::RIGHT;
-    } else {
+    }
+    else
+    {
         player.direction = Direction::NONE;
     }
 
@@ -296,42 +317,42 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
         switch (player.direction)
         {
-            case Direction::UP:
-            {
-                y += 1;
-                auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                    { return (cell.positions.x == x && cell.positions.y == y); })};
-                player.digging(*playerNeighbor);
-                break;
-            }
-            case Direction::RIGHT:
-            {
-                x += 1;
-                auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                    { return (cell.positions.x == x && cell.positions.y == y); })};
-                player.digging(*playerNeighbor);
-                break;
-            }
-            case Direction::DOWN:
-            {
-                y -= 1;
-                auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                    { return (cell.positions.x == x && cell.positions.y == y); })};
-                player.digging(*playerNeighbor);
-                break;
-            }
-            case Direction::LEFT:
-            {
-                x -= 1;
-                auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                    { return (cell.positions.x == x && cell.positions.y == y); })};
-                player.digging(*playerNeighbor);
-                break;
-            }
-            default:
-            {
-                break;
-            }
+        case Direction::UP:
+        {
+            y += 1;
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            player.digging(*playerNeighbor);
+            break;
+        }
+        case Direction::RIGHT:
+        {
+            x += 1;
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            player.digging(*playerNeighbor);
+            break;
+        }
+        case Direction::DOWN:
+        {
+            y -= 1;
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            player.digging(*playerNeighbor);
+            break;
+        }
+        case Direction::LEFT:
+        {
+            x -= 1;
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            player.digging(*playerNeighbor);
+            break;
+        }
+        default:
+        {
+            break;
+        }
         }
     }
 }
