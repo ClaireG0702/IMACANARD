@@ -63,7 +63,7 @@ StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, fl
     };
 
     cellPointer->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
-    cellPointer->addOneBuffer(2, 2, squareCoords.data(), "uvs", true);
+    cellPointer->addOneBuffer(2, 2, uvs.data(), "uvs", true);
     return cellPointer;
 }
 
@@ -96,38 +96,24 @@ std::vector<GLBI_Texture> initTextures()
                                           "assets/images/brown_ducky.png",
                                           "assets/images/error.png"};
 
+    allTextures.reserve(filenames.size()); // we already know the size of allTextures
     for (char const *filename : filenames)
     {
-        GLBI_Texture texture{};
-        texture = createOneTexture(filename);
-        allTextures.push_back(texture);
+        allTextures.push_back(createOneTexture(filename)); // createOneTexture creates a new Texture that is pushed at the end of the vector
     }
 
     return allTextures;
 }
 
-GLBI_Texture setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures)
+const GLBI_Texture &getTextureForCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures)
 {
-    GLBI_Texture cellTexture{};
-
-    switch (cell.value)
+    if (cell.value < 0 || cell.value >= allTextures.size())
     {
-    // TODO : find out how to use specific sprites
-    case 0:
-        cellTexture = allTextures[0];
-        break;
-    case 1:
-        cellTexture = allTextures[1];
-        break;
-    case 2:
-        cellTexture = allTextures[2];
-        break;
-    default:
-        cellTexture = allTextures[3]; // error
-        break;
+        std::cerr << "Error: Cell value out of range for textures." << std::endl;
+        return allTextures.back(); // back = error texture --> to know visually something not ok
     }
 
-    return cellTexture;
+    return allTextures[cell.value]; // TODO : find out how to use one part of sprites
 };
 
 void setTypeCell(Cell const &cell)
@@ -263,7 +249,7 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
         {
             test2 != test2;
             myEngine.activateTexturing(true);
-            GLBI_Texture cellTexture{myTextureTest};
+            GLBI_Texture &cellTexture{myTextureTest}; // use a reference to myTextureTest
             cellTexture.attachTexture();
             cell.square->draw();
             cellTexture.detachTexture();
@@ -271,7 +257,8 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
         else
         {
             myEngine.activateTexturing(true);
-            GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
+            // GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
+            GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(getTextureForCell(cell, allTextures))}; // use references
             cellTexture.attachTexture();
             cell.square->draw();
             cellTexture.detachTexture();
