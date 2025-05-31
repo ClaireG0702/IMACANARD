@@ -88,7 +88,7 @@ std::vector<GLBI_Texture> initTextures()
 {
     std::vector<GLBI_Texture> allTextures{};
 
-    std::array<char const *, 4> filenames{"assets/images/water.png",
+    std::array<char const *, 4> filenames{"assets/images/Water.png",
                                           "assets/images/yellow_ducky.png",
                                           "assets/images/brown_ducky.png",
                                           "assets/images/error.png"};
