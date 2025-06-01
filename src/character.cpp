@@ -1,47 +1,56 @@
 #include "includes/character.hpp"
 
-void updatePlayerPosition(std::vector<Cell> &map, float deltaTime, Player &player) {
+#define WIDTH 25
+#define CELLSIZE (1.0f / WIDTH)
+#define CHARACTERSSIZE (1.0f / (WIDTH * 2))
+
+bool isCellFree(const std::vector<Cell>& map, int x, int y) {
+    for (const Cell& cell : map) {
+        if ((int)cell.positions.x == x && (int)cell.positions.y == y) {
+            return cell.value == 0;
+        }
+    }
+    return false;
+}
+
+bool checkIfPositionIsValid(const std::vector<Cell>& map, glm::vec2 playerPos) {
+    glm::vec2 corners[4] = {
+        {std::floor(playerPos.x - CHARACTERSSIZE), std::floor(playerPos.y - CHARACTERSSIZE)}, // bas gauche
+        {std::round(playerPos.x), std::floor(playerPos.y - CHARACTERSSIZE)}, // bas droite
+        {std::floor(playerPos.x - CHARACTERSSIZE), std::round(playerPos.y)}, // haut gauche
+        {std::round(playerPos.x), std::round(playerPos.y)}  // haut droite
+    };
+
+    for (const glm::vec2& corner : corners) {
+        int cx = static_cast<int>(corner.x);
+        int cy = static_cast<int>(corner.y);
+
+        if (cx < 0 || cy < 0 || cx >= WIDTH || cy >= WIDTH || !isCellFree(map, cx, cy)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void updatePlayerPosition(std::vector<Cell>& map, float deltaTime, Player& player) {
     glm::vec2 movement(0.f);
-    
+
     switch (player.direction) {
-        case Direction::UP:
-            movement.y = 1;
-            break;
-        case Direction::RIGHT:
-            movement.x = 1;
-            break;
-        case Direction::DOWN:
-            movement.y = -1;
-            break;
-        case Direction::LEFT:
-            movement.x = -1;
-            break;
-        default:
-            break;
+        case Direction::UP:    movement.y = 1.f; break;
+        case Direction::DOWN:  movement.y = -1.f; break;
+        case Direction::LEFT:  movement.x = -1.f; break;
+        case Direction::RIGHT: movement.x = 1.f; break;
+        default: return;
     }
 
     glm::vec2 nextPos = player.position + movement * player.speed * deltaTime;
 
-    int nextX = static_cast<int>(nextPos.x);
-    int nextY = static_cast<int>(nextPos.y);
-    if(checkIfPositionIsValid(map, nextX, nextY)) {
+    if (checkIfPositionIsValid(map, nextPos)) {
         player.position = nextPos;
-        player.gridPos = glm::vec2(nextX, nextY);
+        player.gridPos = glm::vec2(
+            std::floor(player.position.x),
+            std::floor(player.position.y)
+        );
     }
-}
-
-bool checkIfPositionIsValid(std::vector<Cell> &map, int x, int y) {
-    // Vérifie que la position est dans la map
-    if (x < map.front().positions.x || y < map.front().positions.y || x >= map.back().positions.x || y >= map.back().positions.y)
-        return false;
-
-    // Recherche la cellule correspondante
-    for (const Cell& cell : map) {
-        if (static_cast<int>(cell.positions.x) == x && static_cast<int>(cell.positions.y) == y) {
-            // Vérifie que la valeur n'est pas 1
-            return cell.value != 1;
-        }
-    }
-    // Si aucune cellule trouvée à cette position, on considère que ce n'est pas valide
-    return false;
 }
