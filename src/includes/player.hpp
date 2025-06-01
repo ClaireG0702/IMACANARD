@@ -11,7 +11,6 @@ struct Player {
     glm::vec2 gridPos {};
     Direction direction {};
     float speed {2.0f};
-    STP3D::StandardMesh *square;
 
     void digging (Cell& block);
 };

@@ -66,7 +66,6 @@ struct Cell
 {
     glm::vec2 positions; // x,y
     unsigned int value;
-    STP3D::StandardMesh *square;
 };
 
 struct CellDirection

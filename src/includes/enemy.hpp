@@ -12,7 +12,6 @@
 struct Enemy {
     glm::vec2 position {};
     Direction direction {};
-    STP3D::StandardMesh *square;
 };
 
 void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map);
