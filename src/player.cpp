@@ -48,8 +48,10 @@ void initPlayer(Player &player, std::vector<Cell> &map) {
     if (!closestCell) {
         int index = std::rand() % map.size();
         player.position = map[index].positions;
+        player.gridPos = map[index].positions;
     } else {
         player.position = closestCell->positions;
+        player.gridPos = closestCell->positions;
     }
 
     player.direction = Direction::NONE;

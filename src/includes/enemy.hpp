@@ -11,11 +11,13 @@
 
 struct Enemy {
     glm::vec2 position {};
+    glm::vec2 gridPos {};
     Direction direction {};
+    float speed {1.5f};
 };
 
 void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map);
-void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap);
+void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap, float deltaTime);
 
 std::vector<Cell> createValuedMap(std::vector<Cell> &map, Player &posPlayer);
 std::vector<CellDirection> createDirectedMap(std::vector<Cell> &map);

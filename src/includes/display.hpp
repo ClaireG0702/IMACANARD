@@ -44,3 +44,6 @@ GLBI_Texture setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &a
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures);
+
+void updatePlayerMesh(Player &player);
+void updateEnemiesMesh(std::vector<Enemy> &enemies);

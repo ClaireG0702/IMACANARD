@@ -24,6 +24,7 @@ std::set<int> activeKeys;
 
 Player player{};
 std::vector<Enemy> enemies;
+std::vector<Cell> valuedMap;
 std::vector<CellDirection> directedMap;
 
 std::vector<GLBI_Texture> allTextures{};
@@ -38,13 +39,13 @@ void initScene()
     allTextures = initTextures();
     
     initPlayer(player, map);
+    valuedMap = createValuedMap(map, player);
+    directedMap = createDirectedMap(valuedMap);
+
     enemies = std::vector<Enemy>(2);
     initEnemies(enemies, map);
 
-
     // TODO : define positions of obstacles
-    // TODO : define positions of player (center of the map)
-    // TODO : define positions of enemies
 }
 
 // create a standard mesh pointer to add coordinates of the cell based on it's size and placement
@@ -132,10 +133,10 @@ void setTypeCell(Cell const &cell)
     switch (cell.value)
     {
     case 0:
-        myEngine.setFlatColor(0, 0, 1); // Green
+        myEngine.setFlatColor(0, 0, 1); // Blue
         break;
     case 1:
-        myEngine.setFlatColor(0, 1, 0); // Blue
+        myEngine.setFlatColor(0, 1, 0); // Green
         break;
     default:
         myEngine.setFlatColor(0, 0, 0); // Default
@@ -173,13 +174,12 @@ void updatePlayerMesh(Player &player)
 
 void updateEnemiesMesh(std::vector<Enemy> &enemies)
 {
-    myEngine.setFlatColor(1.0f, 1.0f, 0.0f);
-
     for (Enemy &enemy : enemies)
     {
         float x = -0.5f + enemy.position.x * CELLSIZE;
         float y = -0.5f + enemy.position.y * CELLSIZE;
-
+        
+        myEngine.setFlatColor(1.0f, 1.0f, 0.0f);
         myEngine.mvMatrixStack.pushMatrix();
             myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
             myEngine.updateMvMatrix();
@@ -211,7 +211,7 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
     {
         GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
         cellTexture.attachTexture();
-        cell.square->draw();
+        //cell.square->draw();
         cellTexture.detachTexture();
     };
 }
@@ -228,7 +228,10 @@ void renderScene()
     
     updatePlayerPosition(map, deltaTime, player);
     updatePlayerMesh(player);
-    updateEnemies(enemies, directedMap);
+    
+    valuedMap = createValuedMap(map, player);
+    directedMap = createDirectedMap(valuedMap);
+    updateEnemies(enemies, directedMap, deltaTime);
     updateEnemiesMesh(enemies);
 }
 
@@ -252,17 +255,12 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         player.direction = Direction::NONE;
     }
 
-    /*if(isPositionUpdated) {
-        updatePlayerMesh(player, CELLSIZE);
-
-        auto valuedMap = createValuedMap(map, player);
-        directedMap = createDirectedMap(valuedMap);
-    }*/
-
     if (key == GLFW_KEY_Q && (action == GLFW_PRESS || action == GLFW_REPEAT))
     { // Quand on appuie sur 'A', on mine le bloc devant nous
         auto x{player.position.x};
         auto y{player.position.y};
+
+        std::cout << "Try to dig" << std::endl;
 
         switch (player.direction)
         {

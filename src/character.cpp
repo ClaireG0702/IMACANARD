@@ -41,7 +41,7 @@ void updatePlayerPosition(std::vector<Cell>& map, float deltaTime, Player& playe
         case Direction::DOWN:  movement.y = -1.f; break;
         case Direction::LEFT:  movement.x = -1.f; break;
         case Direction::RIGHT: movement.x = 1.f; break;
-        default: return;
+        default: break;
     }
 
     glm::vec2 nextPos = player.position + movement * player.speed * deltaTime;

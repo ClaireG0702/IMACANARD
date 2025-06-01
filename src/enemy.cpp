@@ -17,6 +17,7 @@ void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map) {
         }
 
         enemy.position = cell->positions;
+        enemy.gridPos = cell->positions;
         enemy.direction = Direction::NONE;
     }
 }
@@ -33,7 +34,7 @@ std::vector<Cell> createValuedMap(std::vector<Cell> &map, Player &player) {
     }
 
     // Initialiser la position du joueur avec un coût de 0
-    glm::vec2 playerPos = player.position;
+    glm::vec2 playerPos = player.gridPos;
     auto it = std::find_if(valuedMap.begin(), valuedMap.end(), [&playerPos](const Cell &cell) {
         return cell.positions == playerPos;
     });
@@ -56,9 +57,9 @@ std::vector<Cell> createValuedMap(std::vector<Cell> &map, Player &player) {
             int y = currentCell.positions.y;
 
             switch (i) {
-                case 0: y--; break; // UP
+                case 0: y++; break; // UP
                 case 1: x++; break; // RIGHT
-                case 2: y++; break; // DOWN
+                case 2: y--; break; // DOWN
                 case 3: x--; break; // LEFT
                 default: break;
             }
@@ -91,14 +92,6 @@ std::vector<Cell> createValuedMap(std::vector<Cell> &map, Player &player) {
         }
     }
 
-    /*
-    valuedMap.erase(
-        std::remove_if(valuedMap.begin(), valuedMap.end(), [](const Cell &cell) {
-            return cell.value == INT_MAX;
-        }),
-        valuedMap.end()
-    );*/
-
     return valuedMap;
 }
 
@@ -129,9 +122,9 @@ std::vector<CellDirection> createDirectedMap(std::vector<Cell> &map) {
             int neighborY = y;
 
             switch (i) {
-                case 0: neighborY--; break; // UP
+                case 0: neighborY++; break; // UP
                 case 1: neighborX++; break; // RIGHT
-                case 2: neighborY++; break; // DOWN
+                case 2: neighborY--; break; // DOWN
                 case 3: neighborX--; break; // LEFT
                 default: break;
             }
@@ -165,29 +158,29 @@ std::vector<CellDirection> createDirectedMap(std::vector<Cell> &map) {
     return directedMap;
 }
 
-void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap) {
+void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap, float deltaTime) {
     for (Enemy& enemy : enemies) {
         // Trouver la direction associée à la position de l'ennemi
         auto it = std::find_if(directedMap.begin(), directedMap.end(), [&enemy](const CellDirection& cellDir) {
-            return cellDir.positions == enemy.position;
+            return cellDir.positions == enemy.gridPos;
         });
 
         if (it != directedMap.end()) {
             Direction dir = it->direction;
-
-            int x = enemy.position.x;
-            int y = enemy.position.y;
+            glm::vec2 movement(0.f);
 
             switch (dir) {
-                case Direction::UP:    y--; break;
-                case Direction::RIGHT: x++; break;
-                case Direction::DOWN:  y++; break;
-                case Direction::LEFT:  x--; break;
-                case Direction::NONE:  continue; // Pas de déplacement possible
+                case Direction::UP:    movement.y = 1.f; break;
+                case Direction::DOWN:  movement.y = -1.f; break;
+                case Direction::LEFT:  movement.x = -1.f; break;
+                case Direction::RIGHT: movement.x = 1.f; break;
+                default:  break;
             }
 
-            enemy.position = glm::vec2(x, y);
+            enemy.position += movement * enemy.speed * deltaTime;
             enemy.direction = dir;
+
+            enemy.gridPos = glm::vec2(std::floor(enemy.position.x), std::floor(enemy.position.y));
         }
     }
 }
