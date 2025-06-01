@@ -38,13 +38,9 @@ StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, fl
 std::vector<GLBI_Texture> initTextures();
 GLBI_Texture createOneTexture(const char *filename);
 void setTypeCell(Cell const &cell);
-void initCell(Cell &cell, float const x, float const y, float cellWidth, float cellHeight);
-void initMap(std::vector<Cell> &map);
+StandardMesh* createSharedCellMesh(float cellWidth, float cellHeight, float z = 0.f);
 void drawBaseMap(std::vector<Cell> const &map);
 GLBI_Texture setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures);
-
-void initAllCharacters(Player &player, std::vector<Cell> &map);
-void drawAllCharacters(Player &player);
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures);

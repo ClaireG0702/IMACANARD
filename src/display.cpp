@@ -13,9 +13,12 @@ static const float GL_VIEW_SIZE = 1.0;
 GLBI_Engine myEngine;
 
 #define WIDTH 25
-std::vector<Cell> map; // the map to be displayed
 #define CELLSIZE (1.0f / WIDTH)
 #define CHARACTERSSIZE (1.0f / (WIDTH * 2))
+
+std::vector<Cell> map; // the map to be displayed
+StandardMesh* cellMesh = nullptr;
+StandardMesh* characterMesh = nullptr;
 
 std::set<int> activeKeys;
 
@@ -30,10 +33,14 @@ void initScene()
     map = generateMap(WIDTH, WIDTH);
     map = generateCellularMap(map, 4);
 
+    cellMesh = createSharedCellMesh(CELLSIZE, CELLSIZE);
+    characterMesh = createSharedCellMesh(CHARACTERSSIZE, CHARACTERSSIZE, 1.0f);
     allTextures = initTextures();
-    initMap(map);
-    initAllCharacters(player, map);
-    // displayBasicMap(map);
+    
+    initPlayer(player, map);
+    enemies = std::vector<Enemy>(2);
+    initEnemies(enemies, map);
+
 
     // TODO : define positions of obstacles
     // TODO : define positions of player (center of the map)
@@ -136,54 +143,19 @@ void setTypeCell(Cell const &cell)
     }
 }
 
-void initCell(Cell &cell, float const x, float const y, float cellWidth, float cellHeight)
-{
-    cell.square = createCellBuffer(x, y, cellWidth, cellHeight, 0.f); // the cell's square have a buffer with it's coordinates
-    cell.square->createVAO();
-};
+StandardMesh* createSharedCellMesh(float cellWidth, float cellHeight, float z) {
+    StandardMesh* mesh = new StandardMesh(4, GL_TRIANGLE_FAN);
+    std::vector<float> squareCoords {
+        0.0f, 0.0f, z,
+        cellWidth, 0.0f, z,
+        cellWidth, cellHeight, z,
+        0.0f, cellHeight, z
+    };
 
-void initMap(std::vector<Cell> &map)
-{
-    // int width, height;
-    // glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
+    mesh->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
+    mesh->createVAO();
 
-    float rows{map.back().positions.y}; // number of rows same as last y ↕
-    float cols{map.back().positions.x}; // number of cols same as last x ↔
-
-    float cellWidth = 1 / cols;
-    float cellHeight = 1 / rows;
-
-    for (Cell &cell : map)
-    {
-        int col{static_cast<int>(cell.positions.x)}; // which row we are on ↕
-        int row{static_cast<int>(cell.positions.y)}; // which col we are on ↔
-
-        float x{-1 / 2.0f + col * cellWidth};  // to transform it to -1/1 coordinates
-        float y{-1 / 2.0f + row * cellHeight}; // to transform it to -1/1 coordinates
-
-        initCell(cell, x, y, cellWidth, cellHeight); // to initialize a cell
-    }
-};
-
-void initAllCharacters(Player &player, std::vector<Cell> &map)
-{
-    // Initialize player position
-    initPlayer(player, map);
-
-    float x = -1 / 2.0f + player.position.x * CELLSIZE;
-    float y = -1 / 2.0f + player.position.y * CELLSIZE;
-
-    player.square = createCellBuffer(x, y, CHARACTERSSIZE, CHARACTERSSIZE, 1.0f);
-    player.square->createVAO();
-
-    /*enemies = std::vector<Enemy>(2);
-    initEnemies(enemies, map);
-    for(Enemy& enemy: enemies) {
-        float ex = -0.5f + enemy.position.x * CELLSIZE;
-        float ey = -0.5f + enemy.position.y * CELLSIZE;
-        enemy.square = createCellBuffer(ex, ey, CHARACTERSSIZE, CHARACTERSSIZE, 1.0f);
-        enemy.square->createVAO();
-    }*/
+    return mesh;
 }
 
 void updatePlayerMesh(Player &player)
@@ -191,26 +163,28 @@ void updatePlayerMesh(Player &player)
     float x = -0.5f + player.position.x * CELLSIZE;
     float y = -0.5f + player.position.y * CELLSIZE;
 
-    // Supprimer l'ancien mesh
-    if (player.square != nullptr)
-        delete player.square;
-
-    player.square = createCellBuffer(x, y, CHARACTERSSIZE, CHARACTERSSIZE, 1.0f);
-    player.square->createVAO();
+    myEngine.setFlatColor(1.0f, 0.0f, 0.0f);
+    myEngine.mvMatrixStack.pushMatrix();
+        myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
+        myEngine.updateMvMatrix();
+        characterMesh->draw();
+    myEngine.mvMatrixStack.popMatrix();
 }
 
 void updateEnemiesMesh(std::vector<Enemy> &enemies)
 {
+    myEngine.setFlatColor(1.0f, 1.0f, 0.0f);
+
     for (Enemy &enemy : enemies)
     {
         float x = -0.5f + enemy.position.x * CELLSIZE;
         float y = -0.5f + enemy.position.y * CELLSIZE;
 
-        if (enemy.square != nullptr)
-            delete enemy.square;
-
-        enemy.square = createCellBuffer(x, y, CHARACTERSSIZE, CHARACTERSSIZE, 1.0f);
-        enemy.square->createVAO();
+        myEngine.mvMatrixStack.pushMatrix();
+            myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
+            myEngine.updateMvMatrix();
+            characterMesh->draw();
+        myEngine.mvMatrixStack.popMatrix();
     }
 }
 
@@ -219,18 +193,15 @@ void drawBaseMap(std::vector<Cell> const &map)
     for (Cell const &cell : map)
     {
         setTypeCell(cell);
-        cell.square->draw();
-    };
-}
 
-void drawAllCharacters(Player &player)
-{
-    myEngine.setFlatColor(1, 0, 0); // Red
-    player.square->draw();
+        float x = -0.5f + cell.positions.x * CELLSIZE;
+        float y = -0.5f + cell.positions.y * CELLSIZE;
 
-    myEngine.setFlatColor(1,1,0);
-    for(Enemy& enemy: enemies) {
-        enemy.square->draw();
+        myEngine.mvMatrixStack.pushMatrix();
+            myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
+            myEngine.updateMvMatrix();
+            cellMesh->draw();
+        myEngine.mvMatrixStack.popMatrix();
     }
 }
 
@@ -249,13 +220,12 @@ void renderScene()
 {
     //drawTexturedBaseMap(map, allTextures);
     drawBaseMap(map);
-    drawAllCharacters(player);
-
+    
     static double lastTime = glfwGetTime();
     double currentTime = glfwGetTime();
     float deltaTime = static_cast<float>(currentTime - lastTime);
     lastTime = currentTime;
-
+    
     updatePlayerPosition(map, deltaTime, player);
     updatePlayerMesh(player);
     updateEnemies(enemies, directedMap);
