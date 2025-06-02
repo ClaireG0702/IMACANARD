@@ -112,7 +112,7 @@ std::vector<GLBI_Texture> initTextures()
     return allTextures;
 }
 
-const GLBI_Texture &getTextureForCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures)
+const GLBI_Texture &setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures)
 {
     if (cell.value < 0 || cell.value >= allTextures.size())
     {
@@ -148,7 +148,15 @@ StandardMesh *createSharedCellMesh(float cellWidth, float cellHeight, float z)
         cellWidth, cellHeight, z,
         0.0f, cellHeight, z};
 
+    std::vector<float> uvs{
+        0.0f, 0.0f, // Bottom Left
+        1.0f, 0.0f, // Bottom Right
+        1.0f, 1.0f, // Top Right
+        0.0f, 1.0f  // Top Left
+    };
+
     mesh->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
+    mesh->addOneBuffer(2, 2, uvs.data(), "uvs", true);
     mesh->createVAO();
 
     return mesh;
@@ -206,43 +214,51 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
     bool test2{true};
     for (Cell const &cell : map)
     {
-        // GLBI_Texture cellTexture{getTextureForCell(cell, allTextures)}; // change based on cell.value
-        // cellTexture.attachTexture();
-        // cell.square->draw();
-        // cellTexture.detachTexture();
+        setTypeCell(cell);
+
+        float x = -0.5f + cell.positions.x * CELLSIZE;
+        float y = -0.5f + cell.positions.y * CELLSIZE;
+
+        myEngine.mvMatrixStack.pushMatrix();
+        myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
+        myEngine.updateMvMatrix();
+
         if (test1)
         {
             test1 = !test1;
             myEngine.activateTexturing(false);
             myEngine.setFlatColor(1.0, 0.0, 1.0);
-            // cell.square->draw();
-            // myEngine.activateTexturing(true);
+            cellMesh->draw();
+
+            myEngine.activateTexturing(true);
         }
         else if (test2)
         {
             test2 != test2;
             myEngine.activateTexturing(true);
-            // GLBI_Texture &cellTexture{}; // use a reference to myTextureTest
-            // cellTexture.attachTexture();
-            // cell.square->draw();
-            // cellTexture.detachTexture();
+            const GLBI_Texture &cellTexture{setTextureCell(cell, allTextures)};
+            cellTexture.attachTexture();
+            cellMesh->draw();
+            cellTexture.detachTexture();
         }
         else
         {
             myEngine.activateTexturing(true);
             // GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
-            GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(getTextureForCell(cell, allTextures))}; // use references
+            GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(setTextureCell(cell, allTextures))}; // use references
             cellTexture.attachTexture();
-            // cell.square->draw();
+            cellMesh->draw();
             cellTexture.detachTexture();
         }
+
+        myEngine.mvMatrixStack.popMatrix();
     };
 }
 
 void renderScene()
 {
-    // drawTexturedBaseMap(map, allTextures);
-    drawBaseMap(map);
+    drawTexturedBaseMap(map, allTextures);
+    // drawBaseMap(map);
 
     static double lastTime = glfwGetTime();
     double currentTime = glfwGetTime();
