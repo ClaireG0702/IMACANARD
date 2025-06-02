@@ -1,17 +1,16 @@
 cmake_minimum_required(VERSION 3.20)
 project(IMACANARD)
 
+# Sources
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS src/*)
 add_executable(${PROJECT_NAME} ${MY_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE src/)
 
-# Set the folder where the executable will be created
+# Executable output path
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
-# Librairies
-
-# ---Add glbasimac---
+# Librairie glm
 include(FetchContent)
 FetchContent_Declare(
     glm
@@ -21,10 +20,16 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 target_link_libraries(${PROJECT_NAME} PUBLIC glm)
 
+# glbasimac
 add_subdirectory(lib/glbasimac)
 target_link_libraries(${PROJECT_NAME} PRIVATE glbasimac)
 
-# --- Add Dear ImGui ---
+# GLFW (utilise ta version locale)
+# add_subdirectory(lib/glbasimac/glfw)
+target_include_directories(${PROJECT_NAME} BEFORE PRIVATE lib/glfw/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+
+# Dear ImGui
 file(GLOB IMGUI_SOURCES
     lib/imgui/*.cpp
     lib/imgui/backends/imgui_impl_glfw.cpp
@@ -32,15 +37,18 @@ file(GLOB IMGUI_SOURCES
 )
 
 add_library(imgui STATIC ${IMGUI_SOURCES})
-
 target_include_directories(imgui PUBLIC
     lib/imgui
     lib/imgui/backends
+    BEFORE PRIVATE lib/glfw/include  # S'assure que c'est la bonne version de GLFW
 )
 
+target_link_libraries(imgui PRIVATE glfw)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
+
+# Autres includes pour IMGUI
 target_include_directories(${PROJECT_NAME} PRIVATE lib/imgui lib/imgui/backends)
 
-
+# Assets
 include(CmakeUtils/files_and_folders.cmake)
 Cool__target_copy_folder(${PROJECT_NAME} "assets")

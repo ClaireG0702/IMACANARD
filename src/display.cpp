@@ -17,8 +17,8 @@ GLBI_Engine myEngine;
 #define CHARACTERSSIZE (1.0f / (WIDTH * 2))
 
 std::vector<Cell> map; // the map to be displayed
-StandardMesh* cellMesh = nullptr;
-StandardMesh* characterMesh = nullptr;
+StandardMesh *cellMesh = nullptr;
+StandardMesh *characterMesh = nullptr;
 
 std::set<int> activeKeys;
 
@@ -39,7 +39,7 @@ void initScene()
     cellMesh = createSharedCellMesh(CELLSIZE, CELLSIZE);
     characterMesh = createSharedCellMesh(CHARACTERSSIZE, CHARACTERSSIZE, 1.0f);
     allTextures = initTextures();
-    
+
     initPlayer(player, map);
     valuedMap = createValuedMap(map, player);
     directedMap = createDirectedMap(valuedMap);
@@ -139,14 +139,14 @@ void setTypeCell(Cell const &cell)
     }
 }
 
-StandardMesh* createSharedCellMesh(float cellWidth, float cellHeight, float z) {
-    StandardMesh* mesh = new StandardMesh(4, GL_TRIANGLE_FAN);
-    std::vector<float> squareCoords {
+StandardMesh *createSharedCellMesh(float cellWidth, float cellHeight, float z)
+{
+    StandardMesh *mesh = new StandardMesh(4, GL_TRIANGLE_FAN);
+    std::vector<float> squareCoords{
         0.0f, 0.0f, z,
         cellWidth, 0.0f, z,
         cellWidth, cellHeight, z,
-        0.0f, cellHeight, z
-    };
+        0.0f, cellHeight, z};
 
     mesh->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
     mesh->createVAO();
@@ -161,9 +161,9 @@ void updatePlayerMesh(Player &player)
 
     myEngine.setFlatColor(1.0f, 0.0f, 0.0f);
     myEngine.mvMatrixStack.pushMatrix();
-        myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
-        myEngine.updateMvMatrix();
-        characterMesh->draw();
+    myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
+    myEngine.updateMvMatrix();
+    characterMesh->draw();
     myEngine.mvMatrixStack.popMatrix();
 }
 
@@ -173,12 +173,12 @@ void updateEnemiesMesh(std::vector<Enemy> &enemies)
     {
         float x = -0.5f + enemy.position.x * CELLSIZE;
         float y = -0.5f + enemy.position.y * CELLSIZE;
-        
+
         myEngine.setFlatColor(1.0f, 1.0f, 0.0f);
         myEngine.mvMatrixStack.pushMatrix();
-            myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
-            myEngine.updateMvMatrix();
-            characterMesh->draw();
+        myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
+        myEngine.updateMvMatrix();
+        characterMesh->draw();
         myEngine.mvMatrixStack.popMatrix();
     }
 }
@@ -193,9 +193,9 @@ void drawBaseMap(std::vector<Cell> const &map)
         float y = -0.5f + cell.positions.y * CELLSIZE;
 
         myEngine.mvMatrixStack.pushMatrix();
-            myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
-            myEngine.updateMvMatrix();
-            cellMesh->draw();
+        myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
+        myEngine.updateMvMatrix();
+        cellMesh->draw();
         myEngine.mvMatrixStack.popMatrix();
     }
 };
@@ -206,26 +206,26 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
     bool test2{true};
     for (Cell const &cell : map)
     {
-        GLBI_Texture cellTexture{getTextureForCell(cell, allTextures)}; // change based on cell.value
-        cellTexture.attachTexture();
-        //cell.square->draw();
-        cellTexture.detachTexture();
+        // GLBI_Texture cellTexture{getTextureForCell(cell, allTextures)}; // change based on cell.value
+        // cellTexture.attachTexture();
+        // cell.square->draw();
+        // cellTexture.detachTexture();
         if (test1)
         {
             test1 = !test1;
             myEngine.activateTexturing(false);
             myEngine.setFlatColor(1.0, 0.0, 1.0);
-            cell.square->draw();
+            // cell.square->draw();
             // myEngine.activateTexturing(true);
         }
         else if (test2)
         {
             test2 != test2;
             myEngine.activateTexturing(true);
-            GLBI_Texture &cellTexture{}; // use a reference to myTextureTest
-            cellTexture.attachTexture();
-            cell.square->draw();
-            cellTexture.detachTexture();
+            // GLBI_Texture &cellTexture{}; // use a reference to myTextureTest
+            // cellTexture.attachTexture();
+            // cell.square->draw();
+            // cellTexture.detachTexture();
         }
         else
         {
@@ -233,7 +233,7 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
             // GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
             GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(getTextureForCell(cell, allTextures))}; // use references
             cellTexture.attachTexture();
-            cell.square->draw();
+            // cell.square->draw();
             cellTexture.detachTexture();
         }
     };
@@ -241,17 +241,17 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
 
 void renderScene()
 {
-    //drawTexturedBaseMap(map, allTextures);
+    // drawTexturedBaseMap(map, allTextures);
     drawBaseMap(map);
-    
+
     static double lastTime = glfwGetTime();
     double currentTime = glfwGetTime();
     float deltaTime = static_cast<float>(currentTime - lastTime);
     lastTime = currentTime;
-    
+
     updatePlayerPosition(map, deltaTime, player);
     updatePlayerMesh(player);
-    
+
     valuedMap = createValuedMap(map, player);
     directedMap = createDirectedMap(valuedMap);
     updateEnemies(enemies, directedMap, deltaTime);
