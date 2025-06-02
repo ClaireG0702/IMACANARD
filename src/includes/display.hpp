@@ -40,7 +40,6 @@ GLBI_Texture createOneTexture(const char *filename);
 void setTypeCell(Cell const &cell);
 StandardMesh* createSharedCellMesh(float cellWidth, float cellHeight, float z = 0.f);
 void drawBaseMap(std::vector<Cell> const &map);
-GLBI_Texture setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures);
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures);

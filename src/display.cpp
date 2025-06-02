@@ -29,6 +29,8 @@ std::vector<CellDirection> directedMap;
 
 std::vector<GLBI_Texture> allTextures{};
 
+GLBI_Texture myTextureTest{};
+
 void initScene()
 {
     map = generateMap(WIDTH, WIDTH);
@@ -60,7 +62,15 @@ StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, fl
         x, y + cellHeight, z              // Top Left
     };
 
+    std::vector<float> uvs{
+        0.0f, 0.0f, // Bottom Left
+        1.0f, 0.0f, // Bottom Right
+        1.0f, 1.0f, // Top Right
+        0.0f, 1.0f  // Top Left
+    };
+
     cellPointer->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
+    cellPointer->addOneBuffer(2, 2, uvs.data(), "uvs", true);
     return cellPointer;
 }
 
@@ -88,44 +98,29 @@ std::vector<GLBI_Texture> initTextures()
 {
     std::vector<GLBI_Texture> allTextures{};
 
-    std::array<char const *, 4> filenames{"assets/images/water.png",
+    std::array<char const *, 4> filenames{"assets/images/Water.png",
                                           "assets/images/yellow_ducky.png",
                                           "assets/images/brown_ducky.png",
                                           "assets/images/error.png"};
 
+    allTextures.reserve(filenames.size()); // we already know the size of allTextures
     for (char const *filename : filenames)
     {
-        GLBI_Texture texture{};
-        texture = createOneTexture(filename);
-
-        allTextures.push_back(texture);
+        allTextures.push_back(createOneTexture(filename)); // createOneTexture creates a new Texture that is pushed at the end of the vector
     }
 
     return allTextures;
 }
 
-GLBI_Texture setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures)
+const GLBI_Texture &getTextureForCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures)
 {
-    GLBI_Texture cellTexture{};
-
-    switch (cell.value)
+    if (cell.value < 0 || cell.value >= allTextures.size())
     {
-    // TODO : find out how to use specific sprites
-    case 0:
-        cellTexture = allTextures[0];
-        break;
-    case 1:
-        cellTexture = allTextures[1];
-        break;
-    case 2:
-        cellTexture = allTextures[2];
-        break;
-    default:
-        cellTexture = allTextures[3]; // error
-        break;
+        std::cerr << "Error: Cell value out of range for textures." << std::endl;
+        return allTextures.back(); // back = error texture --> to know visually something not ok
     }
 
-    return cellTexture;
+    return allTextures[cell.value]; // TODO : find out how to use one part of sprites
 };
 
 void setTypeCell(Cell const &cell)
@@ -203,16 +198,44 @@ void drawBaseMap(std::vector<Cell> const &map)
             cellMesh->draw();
         myEngine.mvMatrixStack.popMatrix();
     }
-}
+};
 
 void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures)
 {
+    bool test1{true};
+    bool test2{true};
     for (Cell const &cell : map)
     {
-        GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
+        GLBI_Texture cellTexture{getTextureForCell(cell, allTextures)}; // change based on cell.value
         cellTexture.attachTexture();
         //cell.square->draw();
         cellTexture.detachTexture();
+        if (test1)
+        {
+            test1 = !test1;
+            myEngine.activateTexturing(false);
+            myEngine.setFlatColor(1.0, 0.0, 1.0);
+            cell.square->draw();
+            // myEngine.activateTexturing(true);
+        }
+        else if (test2)
+        {
+            test2 != test2;
+            myEngine.activateTexturing(true);
+            GLBI_Texture &cellTexture{}; // use a reference to myTextureTest
+            cellTexture.attachTexture();
+            cell.square->draw();
+            cellTexture.detachTexture();
+        }
+        else
+        {
+            myEngine.activateTexturing(true);
+            // GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
+            GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(getTextureForCell(cell, allTextures))}; // use references
+            cellTexture.attachTexture();
+            cell.square->draw();
+            cellTexture.detachTexture();
+        }
     };
 }
 
@@ -237,21 +260,33 @@ void renderScene()
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-    if(action == GLFW_PRESS) {
+    if (action == GLFW_PRESS)
+    {
         activeKeys.insert(key);
-    } else if(action == GLFW_RELEASE) {
+    }
+    else if (action == GLFW_RELEASE)
+    {
         activeKeys.erase(key);
     }
 
-    if(activeKeys.count(GLFW_KEY_UP)) {
+    if (activeKeys.count(GLFW_KEY_UP))
+    {
         player.direction = Direction::UP;
-    } else if(activeKeys.count(GLFW_KEY_DOWN)) {
+    }
+    else if (activeKeys.count(GLFW_KEY_DOWN))
+    {
         player.direction = Direction::DOWN;
-    } else if(activeKeys.count(GLFW_KEY_LEFT)) {
+    }
+    else if (activeKeys.count(GLFW_KEY_LEFT))
+    {
         player.direction = Direction::LEFT;
-    } else if(activeKeys.count(GLFW_KEY_RIGHT)) {
+    }
+    else if (activeKeys.count(GLFW_KEY_RIGHT))
+    {
         player.direction = Direction::RIGHT;
-    } else {
+    }
+    else
+    {
         player.direction = Direction::NONE;
     }
 
@@ -264,42 +299,42 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
         switch (player.direction)
         {
-            case Direction::UP:
-            {
-                y += 1;
-                auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                    { return (cell.positions.x == x && cell.positions.y == y); })};
-                player.digging(*playerNeighbor);
-                break;
-            }
-            case Direction::RIGHT:
-            {
-                x += 1;
-                auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                    { return (cell.positions.x == x && cell.positions.y == y); })};
-                player.digging(*playerNeighbor);
-                break;
-            }
-            case Direction::DOWN:
-            {
-                y -= 1;
-                auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                    { return (cell.positions.x == x && cell.positions.y == y); })};
-                player.digging(*playerNeighbor);
-                break;
-            }
-            case Direction::LEFT:
-            {
-                x -= 1;
-                auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
-                    { return (cell.positions.x == x && cell.positions.y == y); })};
-                player.digging(*playerNeighbor);
-                break;
-            }
-            default:
-            {
-                break;
-            }
+        case Direction::UP:
+        {
+            y += 1;
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            player.digging(*playerNeighbor);
+            break;
+        }
+        case Direction::RIGHT:
+        {
+            x += 1;
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            player.digging(*playerNeighbor);
+            break;
+        }
+        case Direction::DOWN:
+        {
+            y -= 1;
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            player.digging(*playerNeighbor);
+            break;
+        }
+        case Direction::LEFT:
+        {
+            x -= 1;
+            auto playerNeighbor{std::find_if(map.begin(), map.end(), [x, y](const Cell &cell)
+                                             { return (cell.positions.x == x && cell.positions.y == y); })};
+            player.digging(*playerNeighbor);
+            break;
+        }
+        default:
+        {
+            break;
+        }
         }
     }
 }
