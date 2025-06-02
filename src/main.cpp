@@ -2,6 +2,9 @@
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "tools/matrix_stack.hpp"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 #include "includes/display.hpp"
 
 #include <iostream>
@@ -92,6 +95,16 @@ int main()
         return -1;
     }
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    io.FontGlobalScale = 2.8f; 
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 130");
+
+
     // Initialize Rendering Engine
     myEngine.initGL();
 
@@ -102,18 +115,68 @@ int main()
 
     initScene();
 
+    bool showMenu = true;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Get time (in second) at loop beginning */
         double currentTime = glfwGetTime();
 
-        /* Render here */
-        glClearColor(0.f, 0.0f, 0.2f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDisable(GL_DEPTH_TEST);
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-        renderScene();
+        if(showMenu) {
+            int display_w, display_h;
+            glfwGetFramebufferSize(window, &display_w, &display_h);
+
+            // Taille du menu ImGui
+            ImVec2 menuSize = ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT); // à ajuster selon le contenu
+
+            // Position centrée pour placer le menu
+            ImVec2 menuPos = ImVec2(
+                (display_w - menuSize.x) * 0.5f,
+                (display_h - menuSize.y) * 0.5f
+            );
+
+            // Appliquer la position et taille avant Begin()
+            ImGui::SetNextWindowPos(menuPos);
+            ImGui::SetNextWindowSize(menuSize);
+            ImGui::Begin("Menu principale", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
+            
+            ImGui::Dummy(ImVec2(0.0f, 20.0f));
+            ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.25f);
+            ImGui::Text("Bienvenue dans IMACANARD !");
+
+            ImGui::Dummy(ImVec2(0.0f, 30.0f));
+            ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.5f);
+            if(ImGui::Button("Jouer", ImVec2(250, 70))) {
+                showMenu = false;
+            }
+
+            ImGui::Dummy(ImVec2(0.0f, 10.0f));
+            ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.5f);
+            if(ImGui::Button("Quitter", ImVec2(250, 70))) {
+                glfwSetWindowShouldClose(window, GLFW_TRUE);
+            }
+            ImGui::End();
+        }
+
+        /* Render here */
+        if(!showMenu) {
+            glClearColor(0.f, 0.0f, 0.2f, 0.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glDisable(GL_DEPTH_TEST);
+            
+            renderScene();
+        } else {
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -130,6 +193,10 @@ int main()
             elapsedTime = glfwGetTime() - currentTime;
         }
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;

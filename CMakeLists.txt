@@ -24,5 +24,23 @@ target_link_libraries(${PROJECT_NAME} PUBLIC glm)
 add_subdirectory(lib/glbasimac)
 target_link_libraries(${PROJECT_NAME} PRIVATE glbasimac)
 
+# --- Add Dear ImGui ---
+file(GLOB IMGUI_SOURCES
+    lib/imgui/*.cpp
+    lib/imgui/backends/imgui_impl_glfw.cpp
+    lib/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+add_library(imgui STATIC ${IMGUI_SOURCES})
+
+target_include_directories(imgui PUBLIC
+    lib/imgui
+    lib/imgui/backends
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
+target_include_directories(${PROJECT_NAME} PRIVATE lib/imgui lib/imgui/backends)
+
+
 include(CmakeUtils/files_and_folders.cmake)
 Cool__target_copy_folder(${PROJECT_NAME} "assets")
