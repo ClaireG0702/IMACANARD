@@ -6,6 +6,10 @@
 #include <queue>
 #include <climits>
 
+#define WIDTH 6
+#define CELLSIZE (1.0f / WIDTH)
+#define CHARACTERSSIZE (1.0f / (WIDTH * 2))
+
 void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map) {
     for(Enemy& enemy: enemies) {
         Cell* cell = nullptr;
@@ -158,29 +162,55 @@ std::vector<CellDirection> createDirectedMap(std::vector<Cell> &map) {
     return directedMap;
 }
 
-void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap, float deltaTime) {
+void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap, std::vector<Cell>& map, float deltaTime) {
     for (Enemy& enemy : enemies) {
-        // Trouver la direction associée à la position de l'ennemi
         auto it = std::find_if(directedMap.begin(), directedMap.end(), [&enemy](const CellDirection& cellDir) {
             return cellDir.positions == enemy.gridPos;
         });
 
-        if (it != directedMap.end()) {
-            Direction dir = it->direction;
-            glm::vec2 movement(0.f);
+        Direction dir = Direction::NONE;
 
-            switch (dir) {
-                case Direction::UP:    movement.y = 1.f; break;
-                case Direction::DOWN:  movement.y = -1.f; break;
-                case Direction::LEFT:  movement.x = -1.f; break;
-                case Direction::RIGHT: movement.x = 1.f; break;
-                default:  break;
+        if (it != directedMap.end()) {
+            dir = it->direction;
+        }
+
+        if (dir == Direction::NONE) {
+            dir = enemy.direction;
+        }
+
+        glm::vec2 movement(0.f);
+
+        switch (dir) {
+            case Direction::UP:    movement.y = 1.f; break;
+            case Direction::DOWN:  movement.y = -1.f; break;
+            case Direction::LEFT:  movement.x = -1.f; break;
+            case Direction::RIGHT: movement.x = 1.f; break;
+            default: break;
+        }
+
+        glm::vec2 nextPos = enemy.position + movement * enemy.speed * deltaTime;
+
+        if (!checkIfPositionIsValid(map, nextPos)) {
+            switch (enemy.direction) {
+                case Direction::UP:    movement = glm::vec2(0, 1); break;
+                case Direction::DOWN:  movement = glm::vec2(0, -1); break;
+                case Direction::LEFT:  movement = glm::vec2(-1, 0); break;
+                case Direction::RIGHT: movement = glm::vec2(1, 0); break;
+                default: movement = glm::vec2(0); break;
             }
 
-            enemy.position += movement * enemy.speed * deltaTime;
-            enemy.direction = dir;
+            nextPos = enemy.position + movement * enemy.speed * deltaTime;
 
-            enemy.gridPos = glm::vec2(std::floor(enemy.position.x), std::floor(enemy.position.y));
+            if (!checkIfPositionIsValid(map, nextPos)) {
+                continue;
+            }
+
+            dir = enemy.direction;
         }
+
+        enemy.position = nextPos;
+        enemy.direction = dir;
+        enemy.gridPos = glm::vec2(std::round(enemy.position.x), std::round(enemy.position.y));
     }
 }
+

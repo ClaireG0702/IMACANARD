@@ -12,7 +12,7 @@ static const float GL_VIEW_SIZE = 1.0;
 /* OpenGL Engine */
 GLBI_Engine myEngine;
 
-#define WIDTH 25
+#define WIDTH 6
 #define CELLSIZE (1.0f / WIDTH)
 #define CHARACTERSSIZE (1.0f / (WIDTH * 2))
 
@@ -257,8 +257,8 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
 
 void renderScene()
 {
-    drawTexturedBaseMap(map, allTextures);
-    // drawBaseMap(map);
+    //drawTexturedBaseMap(map, allTextures);
+    drawBaseMap(map);
 
     static double lastTime = glfwGetTime();
     double currentTime = glfwGetTime();
@@ -270,7 +270,7 @@ void renderScene()
 
     valuedMap = createValuedMap(map, player);
     directedMap = createDirectedMap(valuedMap);
-    updateEnemies(enemies, directedMap, deltaTime);
+    updateEnemies(enemies, directedMap, map, deltaTime);
     updateEnemiesMesh(enemies);
 }
 
@@ -308,10 +308,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
     if (key == GLFW_KEY_Q && (action == GLFW_PRESS || action == GLFW_REPEAT))
     { // Quand on appuie sur 'A', on mine le bloc devant nous
-        auto x{player.position.x};
-        auto y{player.position.y};
-
-        std::cout << "Try to dig" << std::endl;
+        auto x{player.gridPos.x};
+        auto y{player.gridPos.y};
 
         switch (player.direction)
         {

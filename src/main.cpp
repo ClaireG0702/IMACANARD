@@ -144,7 +144,7 @@ int main()
             // Appliquer la position et taille avant Begin()
             ImGui::SetNextWindowPos(menuPos);
             ImGui::SetNextWindowSize(menuSize);
-            ImGui::Begin("Menu principale", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
+            ImGui::Begin("Menu principal", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
             
             ImGui::Dummy(ImVec2(0.0f, 20.0f));
             ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.25f);

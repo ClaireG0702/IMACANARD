@@ -15,15 +15,16 @@ bool isCellFree(const std::vector<Cell>& map, int x, int y) {
 
 bool checkIfPositionIsValid(const std::vector<Cell>& map, glm::vec2 playerPos) {
     glm::vec2 corners[4] = {
-        {std::floor(playerPos.x - CHARACTERSSIZE), std::floor(playerPos.y - CHARACTERSSIZE)}, // bas gauche
-        {std::round(playerPos.x), std::floor(playerPos.y - CHARACTERSSIZE)}, // bas droite
-        {std::floor(playerPos.x - CHARACTERSSIZE), std::round(playerPos.y)}, // haut gauche
-        {std::round(playerPos.x), std::round(playerPos.y)}  // haut droite
+        {playerPos.x - 0.5f, playerPos.y - 0.5f}, // bas gauche
+        {playerPos.x, playerPos.y - 0.5f}, // bas droite
+        {playerPos.x - 0.5f, playerPos.y}, // haut gauche
+        {playerPos.x, playerPos.y}  // haut droite
     };
 
+    
     for (const glm::vec2& corner : corners) {
-        int cx = static_cast<int>(corner.x);
-        int cy = static_cast<int>(corner.y);
+        int cx = std::round(corner.x);
+        int cy = std::round(corner.y);
 
         if (cx < 0 || cy < 0 || cx >= WIDTH || cy >= WIDTH || !isCellFree(map, cx, cy)) {
             return false;
@@ -49,8 +50,8 @@ void updatePlayerPosition(std::vector<Cell>& map, float deltaTime, Player& playe
     if (checkIfPositionIsValid(map, nextPos)) {
         player.position = nextPos;
         player.gridPos = glm::vec2(
-            std::floor(player.position.x),
-            std::floor(player.position.y)
+            std::round(player.position.x),
+            std::round(player.position.y)
         );
     }
 }
