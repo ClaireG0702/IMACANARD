@@ -21,6 +21,14 @@ static const double FRAMERATE_IN_SECONDS = 1. / 30.;
 static float aspectRatio = 1.0f;
 static const float GL_VIEW_SIZE = 1.0f;
 
+enum class Page {
+    MAIN_MENU,
+    SETTINGS,
+    RULES,
+    GAME,
+    END_SCREEN
+};
+
 /* Error handling function */
 void onError(int error, const char *description)
 {
@@ -117,55 +125,97 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    bool showMenu = true;
+    Page currentPage = Page::MAIN_MENU;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Get time (in second) at loop beginning */
         double currentTime = glfwGetTime();
 
+        /* Render here */
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        if(showMenu) {
-            int display_w, display_h;
-            glfwGetFramebufferSize(window, &display_w, &display_h);
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        ImVec2 menuSize = ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+        ImVec2 menuPos = ImVec2((display_w - menuSize.x) * 0.5f, (display_h - menuSize.y) * 0.5f);
+        ImGui::SetNextWindowPos(menuPos);
+        ImGui::SetNextWindowSize(menuSize);
 
-            // Taille du menu ImGui
-            ImVec2 menuSize = ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT); // à ajuster selon le contenu
+        if(currentPage != Page::GAME) {
+            ImGui::Begin("Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
 
-            // Position centrée pour placer le menu
-            ImVec2 menuPos = ImVec2(
-                (display_w - menuSize.x) * 0.5f,
-                (display_h - menuSize.y) * 0.5f
-            );
+            if(currentPage == Page::MAIN_MENU) {
+                ImGui::Dummy(ImVec2(0.0f, 100.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.24f);
+                ImGui::Text("Bienvenue dans IMACANARD !");
 
-            // Appliquer la position et taille avant Begin()
-            ImGui::SetNextWindowPos(menuPos);
-            ImGui::SetNextWindowSize(menuSize);
-            ImGui::Begin("Menu principal", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
-            
-            ImGui::Dummy(ImVec2(0.0f, 20.0f));
-            ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.25f);
-            ImGui::Text("Bienvenue dans IMACANARD !");
+                ImGui::Dummy(ImVec2(0.0f, 75.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
+                if(ImGui::Button("Jouer", ImVec2(250, 70))) {
+                    currentPage = Page::GAME;
+                }
 
-            ImGui::Dummy(ImVec2(0.0f, 30.0f));
-            ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.5f);
-            if(ImGui::Button("Jouer", ImVec2(250, 70))) {
-                showMenu = false;
+                ImGui::Dummy(ImVec2(0.0f, 25.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
+                if(ImGui::Button("Paramètres", ImVec2(250, 70))) {
+                    currentPage = Page::SETTINGS;
+                }
+
+                ImGui::Dummy(ImVec2(0.0f, 20.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
+                if(ImGui::Button("Règles", ImVec2(250, 70))) {
+                    currentPage = Page::RULES;
+                }
+
+                ImGui::Dummy(ImVec2(0.0f, 35.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
+                if(ImGui::Button("Quitter", ImVec2(250, 70))) {
+                    glfwSetWindowShouldClose(window, GLFW_TRUE);
+                }
+            } else if (currentPage == Page::SETTINGS) {
+                if (ImGui::Button("Retour")) {
+                    currentPage = Page::MAIN_MENU;
+                }
+
+                ImGui::Dummy(ImVec2(0.0f, 25.0f));
+                ImGui::Text("Paramètres du jeu :");
+                // Todo: ajouter ici les options
+            } else if (currentPage == Page::RULES) {
+                if (ImGui::Button("Retour")) {
+                    currentPage = Page::MAIN_MENU;
+                }
+
+                ImGui::Dummy(ImVec2(0.0f, 25.0f));
+                ImGui::Text("Règles du jeu :");
+
+                //ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + 700);
+                ImGui::Dummy(ImVec2(0.0f, 20.0f));
+                ImGui::Bullet();
+                ImGui::TextWrapped("Déplacez votre canard avec les flèches.");
+
+                ImGui::Dummy(ImVec2(0.0f, 20.0f));
+                ImGui::Bullet();
+                ImGui::TextWrapped("Vous pouvez cassez les nénupahres en appuyant sur 'A'");
+
+                ImGui::Dummy(ImVec2(0.0f, 20.0f));
+                ImGui::Bullet();
+                ImGui::TextWrapped("Évitez les tourbillons et survivez au ennemis !");
+                
+                ImGui::Dummy(ImVec2(0.0f, 20.0f));
+                ImGui::Bullet();
+                ImGui::TextWrapped("Manger les graines et les poissons pour marquer des points.");
+                //ImGui::PopTextWrapPos();
+            } else if (currentPage == Page::END_SCREEN) {
+                ImGui::Text("Fin du jeu");
             }
 
-            ImGui::Dummy(ImVec2(0.0f, 10.0f));
-            ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.5f);
-            if(ImGui::Button("Quitter", ImVec2(250, 70))) {
-                glfwSetWindowShouldClose(window, GLFW_TRUE);
-            }
             ImGui::End();
         }
 
-        /* Render here */
-        if(!showMenu) {
+        if(currentPage == Page::GAME) {
             glClearColor(0.f, 0.0f, 0.2f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glDisable(GL_DEPTH_TEST);
