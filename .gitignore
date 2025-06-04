@@ -2,8 +2,3 @@ build
 bin
 .vscode
 .gitignore
-poubicode
-imgui
-glbasimac
-lib
-mesh.hpp
