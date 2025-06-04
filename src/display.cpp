@@ -29,11 +29,11 @@ GLBI_Texture myTextureTest{};
 
 void initScene()
 {
-    map = generateMap(WIDTH, WIDTH);
+    map = generateMap(width, width);
     map = generateCellularMap(map, 4);
 
-    cellMesh = createSharedCellMesh(CELLSIZE, CELLSIZE);
-    characterMesh = createSharedCellMesh(CHARACTERSSIZE, CHARACTERSSIZE, 1.0f);
+    cellMesh = createSharedCellMesh(cellSize, cellSize);
+    characterMesh = createSharedCellMesh(characterSize, characterSize, 1.0f);
     allTextures = initTextures();
 
     initPlayer(player, map);
@@ -160,8 +160,8 @@ StandardMesh *createSharedCellMesh(float cellWidth, float cellHeight, float z)
 
 void updatePlayerMesh(Player &player)
 {
-    float x = -0.5f + player.position.x * CELLSIZE;
-    float y = -0.5f + player.position.y * CELLSIZE;
+    float x = -0.5f + player.position.x * cellSize;
+    float y = -0.5f + player.position.y * cellSize;
 
     myEngine.setFlatColor(1.0f, 0.0f, 0.0f);
     myEngine.mvMatrixStack.pushMatrix();
@@ -175,8 +175,8 @@ void updateEnemiesMesh(std::vector<Enemy> &enemies)
 {
     for (Enemy &enemy : enemies)
     {
-        float x = -0.5f + enemy.position.x * CELLSIZE;
-        float y = -0.5f + enemy.position.y * CELLSIZE;
+        float x = -0.5f + enemy.position.x * cellSize;
+        float y = -0.5f + enemy.position.y * cellSize;
 
         myEngine.setFlatColor(1.0f, 1.0f, 0.0f);
         myEngine.mvMatrixStack.pushMatrix();
@@ -193,8 +193,8 @@ void drawBaseMap(std::vector<Cell> const &map)
     {
         setTypeCell(cell);
 
-        float x = -0.5f + cell.positions.x * CELLSIZE;
-        float y = -0.5f + cell.positions.y * CELLSIZE;
+        float x = -0.5f + cell.positions.x * cellSize;
+        float y = -0.5f + cell.positions.y * cellSize;
 
         myEngine.mvMatrixStack.pushMatrix();
         myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
@@ -212,8 +212,8 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
     {
         setTypeCell(cell);
 
-        float x = -0.5f + cell.positions.x * CELLSIZE;
-        float y = -0.5f + cell.positions.y * CELLSIZE;
+        float x = -0.5f + cell.positions.x * cellSize;
+        float y = -0.5f + cell.positions.y * cellSize;
 
         myEngine.mvMatrixStack.pushMatrix();
         myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
