@@ -6,6 +6,8 @@ enum class GameStatus {
 };
 extern GameStatus gameStatus;
 
-extern int width = 6;
-extern float cellSize = 1.0f / width;
-extern float characterSize = 1.0f / (width * 2);
+extern int width;
+extern float cellSize;
+extern float characterSize;
+
+extern int numberOfEnemies;

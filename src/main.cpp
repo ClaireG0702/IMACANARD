@@ -178,13 +178,40 @@ int main()
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
                 }
             } else if (currentPage == Page::SETTINGS) {
+                static int mapWidth = width, nbEnemies = numberOfEnemies;
+
                 if (ImGui::Button("Retour")) {
                     currentPage = Page::MAIN_MENU;
                 }
 
                 ImGui::Dummy(ImVec2(0.0f, 25.0f));
                 ImGui::Text("Paramètres du jeu :");
-                // Todo: ajouter ici les options
+
+                ImGui::Dummy(ImVec2(0.0f, 20.0f));
+                ImGui::Text("Largeur de la carte :");
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(200);
+                ImGui::InputInt("##mapWidth", &mapWidth);
+                mapWidth = std::max(10, std::min(mapWidth, 50));
+                
+                ImGui::Dummy(ImVec2(0.0f, 20.0f));
+                ImGui::Text("Nombre d'ennemis :");
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(200);
+                ImGui::InputInt("##nb_enemies", &nbEnemies);
+                nbEnemies = std::max(2, std::min(nbEnemies, 5));
+                
+                ImGui::Dummy(ImVec2(0.0f, 25.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.25f);
+                if(ImGui::Button("Réinitialiser")) {
+                    mapWidth = 25;
+                    nbEnemies = 2;
+                }
+                ImGui::SameLine();
+                if(ImGui::Button("Enregistrer")) {
+                    width = mapWidth;
+                    numberOfEnemies = nbEnemies;
+                }
             } else if (currentPage == Page::RULES) {
                 if (ImGui::Button("Retour")) {
                     currentPage = Page::MAIN_MENU;
@@ -193,7 +220,6 @@ int main()
                 ImGui::Dummy(ImVec2(0.0f, 25.0f));
                 ImGui::Text("Règles du jeu :");
 
-                //ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + 700);
                 ImGui::Dummy(ImVec2(0.0f, 20.0f));
                 ImGui::Bullet();
                 ImGui::TextWrapped("Déplacez votre canard avec les flèches.");
@@ -209,7 +235,6 @@ int main()
                 ImGui::Dummy(ImVec2(0.0f, 20.0f));
                 ImGui::Bullet();
                 ImGui::TextWrapped("Manger les graines et les poissons pour marquer des points.");
-                //ImGui::PopTextWrapPos();
             } else if (currentPage == Page::END_SCREEN) {
                 if(gameStatus == GameStatus::WIN) {
                     ImGui::Text("VICTOIRE");

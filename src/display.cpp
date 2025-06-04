@@ -40,7 +40,7 @@ void initScene()
     valuedMap = createValuedMap(map, player);
     directedMap = createDirectedMap(valuedMap);
 
-    enemies = std::vector<Enemy>(2);
+    enemies = std::vector<Enemy>(numberOfEnemies);
     initEnemies(enemies, map);
 
     // TODO : define positions of obstacles
@@ -266,7 +266,7 @@ void renderScene()
 
     valuedMap = createValuedMap(map, player);
     directedMap = createDirectedMap(valuedMap);
-    updateEnemies(enemies, directedMap, map, deltaTime);
+    updateEnemies(enemies, directedMap, map, player, deltaTime);
     updateEnemiesMesh(enemies);
 }
 
