@@ -1,4 +1,9 @@
 build
 bin
 .vscode
-# .gitignore
+.gitignore
+poubicode
+imgui
+glbasimac
+lib
+mesh.hpp

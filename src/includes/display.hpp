@@ -17,6 +17,7 @@
 #include "enemy.hpp"
 #include "character.hpp"
 #include "map.hpp"
+#include "includes/texture.hpp"
 
 #include <iostream>
 #include <cmath>
@@ -36,14 +37,12 @@ void initScene();
 void renderScene();
 
 StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight, float z);
-std::vector<GLBI_Texture> initTextures();
-GLBI_Texture createOneTexture(const char *filename);
 void setTypeCell(Cell const &cell);
-StandardMesh* createSharedCellMesh(float cellWidth, float cellHeight, float z = 0.f);
+// StandardMesh *createSharedCellMesh(float cellWidth, float cellHeight, float z = 0.f);
+StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const &sprite, float cellWidth, float cellHeight, float z = 0.f);
 void drawBaseMap(std::vector<Cell> const &map);
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
-void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures);
 
 void updatePlayerMesh(Player &player);
 void updateEnemiesMesh(std::vector<Enemy> &enemies);

@@ -99,13 +99,13 @@ int main()
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO(); (void)io;
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
     ImGui::StyleColorsDark();
-    io.FontGlobalScale = 2.8f; 
+    io.FontGlobalScale = 2.8f;
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
-
 
     // Initialize Rendering Engine
     myEngine.initGL();
@@ -251,16 +251,17 @@ int main()
             glClearColor(0.f, 0.0f, 0.2f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glDisable(GL_DEPTH_TEST);
-            
+
             renderScene();
-        } else {
+        }
+        else
+        {
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

@@ -1,7 +1,7 @@
 #include "includes/display.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "tools/stb_image.h"
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "tools/stb_image.h"
 #include <set>
 
 /* Minimal time wanted between two images */
@@ -25,15 +25,28 @@ std::vector<CellDirection> directedMap;
 
 std::vector<GLBI_Texture> allTextures{};
 
-GLBI_Texture myTextureTest{};
+SpriteSheet water{"assets/images/Water.png", 192, 256, 12, 16};
+SpriteSheet yellowDucky{"assets/images/yellow_ducky.png", 216, 144, 6, 4};
+SpriteSheet brownDucky{"assets/images/brown_ducky.png", 216, 144, 6, 4};
+// SpriteSheet otter{"assets/images/otter.png", 6, 3};
+
+Sprite plain{water, {3, 9}, 16, 16};
+Sprite empty{water, {3, 2}, 16, 16};
+
+Sprite playerSprite{yellowDucky, {1, 0}, 36, 36};
+
+// GLBI_Texture myTextureTest{};
 
 void initScene()
 {
     map = generateMap(width, width);
     map = generateCellularMap(map, 4);
 
-    cellMesh = createSharedCellMesh(cellSize, cellSize);
-    characterMesh = createSharedCellMesh(characterSize, characterSize, 1.0f);
+    cellMesh = createSharedCellMesh(water, plain, cellSize, cellSize, 0.0f);
+    addTextureBuffer(cellMesh);
+    characterMesh = createSharedCellMesh(yellowDucky, playerSprite, characterSize, characterSize, 1.0f);
+    addTextureBuffer(characterMesh);
+
     allTextures = initTextures();
 
     initPlayer(player, map);
@@ -45,79 +58,6 @@ void initScene()
 
     // TODO : define positions of obstacles
 }
-
-// create a standard mesh pointer to add coordinates of the cell based on it's size and placement
-// TODO : delete the pointer somewhere
-StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight, float z)
-{
-    StandardMesh *cellPointer = new StandardMesh(4, GL_TRIANGLE_FAN);
-    std::vector<float> squareCoords{
-        x, y, z,                          // Bottom Left
-        x + cellWidth, y, z,              // Bottom Right
-        x + cellWidth, y + cellHeight, z, // Top Right
-        x, y + cellHeight, z              // Top Left
-    };
-
-    std::vector<float> uvs{
-        0.0f, 0.0f, // Bottom Left
-        1.0f, 0.0f, // Bottom Right
-        1.0f, 1.0f, // Top Right
-        0.0f, 1.0f  // Top Left
-    };
-
-    cellPointer->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
-    cellPointer->addOneBuffer(2, 2, uvs.data(), "uvs", true);
-    return cellPointer;
-}
-
-GLBI_Texture createOneTexture(const char *filename)
-{
-    int x{};
-    int y{};
-    int n{};
-
-    unsigned char *pixels{stbi_load(filename, &x, &y, &n, 0)};
-    std::cout << "Image " << filename << (pixels != nullptr ? "" : " not") << " loaded." << std::endl;
-
-    GLBI_Texture texture{};
-    texture.createTexture();
-    texture.attachTexture();
-    texture.setParameters(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    texture.loadImage(x, y, n, pixels);
-    texture.detachTexture();
-    stbi_image_free(pixels);
-
-    return texture;
-};
-
-std::vector<GLBI_Texture> initTextures()
-{
-    std::vector<GLBI_Texture> allTextures{};
-
-    std::array<char const *, 4> filenames{"assets/images/Water.png",
-                                          "assets/images/yellow_ducky.png",
-                                          "assets/images/brown_ducky.png",
-                                          "assets/images/error.png"};
-
-    allTextures.reserve(filenames.size()); // we already know the size of allTextures
-    for (char const *filename : filenames)
-    {
-        allTextures.push_back(createOneTexture(filename)); // createOneTexture creates a new Texture that is pushed at the end of the vector
-    }
-
-    return allTextures;
-}
-
-const GLBI_Texture &setTextureCell(Cell const &cell, std::vector<GLBI_Texture> const &allTextures)
-{
-    if (cell.value < 0 || cell.value >= allTextures.size())
-    {
-        std::cerr << "Error: Cell value out of range for textures." << std::endl;
-        return allTextures.back(); // back = error texture --> to know visually something not ok
-    }
-
-    return allTextures[cell.value]; // TODO : find out how to use one part of sprites
-};
 
 void setTypeCell(Cell const &cell)
 {
@@ -135,7 +75,27 @@ void setTypeCell(Cell const &cell)
     }
 }
 
-StandardMesh *createSharedCellMesh(float cellWidth, float cellHeight, float z)
+/*
+    Toute la texture                    Accéder à Un bout
+          v                                y
+    (u0,v1) ^ 1          (u1,v1)           ^
+            |****TTTTTTT               ****|TTTTTTT
+            |****TTTTTTT               ****|TTTTTTT
+            |***********               ****|*******
+            |***********               ****|*******
+    (u0,v0) |*********** (u1,v0)       ****|*******
+          -------------> u             ---------------> x = u_norm
+          0              1
+
+    Normalisation :
+    1/nbRow = hauteur de * avec les axes u et v
+    1/nbCol = largeur de * avec les axes u et v
+
+    u0 = T.u * spriteWidth, u1 = u0 + spriteWidth
+    v0 = T.v * spriteHeight, v1 = v0 + spriteHeight
+*/
+
+StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const &sprite, float cellWidth, float cellHeight, float z)
 {
     StandardMesh *mesh = new StandardMesh(4, GL_TRIANGLE_FAN);
     std::vector<float> squareCoords{
@@ -144,12 +104,23 @@ StandardMesh *createSharedCellMesh(float cellWidth, float cellHeight, float z)
         cellWidth, cellHeight, z,
         0.0f, cellHeight, z};
 
-    std::vector<float> uvs{
-        0.0f, 0.0f, // Bottom Left
-        1.0f, 0.0f, // Bottom Right
-        1.0f, 1.0f, // Top Right
-        0.0f, 1.0f  // Top Left
-    };
+    float u0{sprite.positions.x * sprite.spriteWidth / spritesheet.width};
+    float u1{u0 + sprite.spriteWidth / spritesheet.width};
+    float v0{sprite.positions.y * sprite.spriteHeight / spritesheet.height};
+    float v1{v0 + sprite.spriteHeight / spritesheet.height};
+
+    glm::vec2 bottomLeft{u0, v0};
+    glm::vec2 bottomRight{u1, v0};
+    glm::vec2 topRight{u1, v1};
+    glm::vec2 topLeft{u0, v1};
+
+    std::vector<float>
+        uvs{
+            bottomLeft.x, bottomLeft.y,   // Bottom Left (0,0)
+            bottomRight.x, bottomRight.y, // Bottom Right (1,0)
+            topRight.x, topRight.y,       // Top Right (1,1)
+            topLeft.x, topLeft.y          // Top Left (0,1)
+        };
 
     mesh->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
     mesh->addOneBuffer(2, 2, uvs.data(), "uvs", true);
@@ -204,57 +175,10 @@ void drawBaseMap(std::vector<Cell> const &map)
     }
 };
 
-void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures)
-{
-    bool test1{true};
-    bool test2{true};
-    for (Cell const &cell : map)
-    {
-        setTypeCell(cell);
-
-        float x = -0.5f + cell.positions.x * cellSize;
-        float y = -0.5f + cell.positions.y * cellSize;
-
-        myEngine.mvMatrixStack.pushMatrix();
-        myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
-        myEngine.updateMvMatrix();
-
-        if (test1)
-        {
-            test1 = !test1;
-            myEngine.activateTexturing(false);
-            myEngine.setFlatColor(1.0, 0.0, 1.0);
-            cellMesh->draw();
-
-            myEngine.activateTexturing(true);
-        }
-        else if (test2)
-        {
-            test2 != test2;
-            myEngine.activateTexturing(true);
-            const GLBI_Texture &cellTexture{setTextureCell(cell, allTextures)};
-            cellTexture.attachTexture();
-            cellMesh->draw();
-            cellTexture.detachTexture();
-        }
-        else
-        {
-            myEngine.activateTexturing(true);
-            // GLBI_Texture cellTexture{setTextureCell(cell, allTextures)}; // change based on cell.value
-            GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(setTextureCell(cell, allTextures))}; // use references
-            cellTexture.attachTexture();
-            cellMesh->draw();
-            cellTexture.detachTexture();
-        }
-
-        myEngine.mvMatrixStack.popMatrix();
-    };
-}
-
 void renderScene()
 {
-    //drawTexturedBaseMap(map, allTextures);
-    drawBaseMap(map);
+    drawTexturedBaseMap(map, allTextures, cellSize, cellMesh);
+    // drawBaseMap(map);
 
     static double lastTime = glfwGetTime();
     double currentTime = glfwGetTime();
@@ -304,8 +228,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
     if (key == GLFW_KEY_Q && (action == GLFW_PRESS || action == GLFW_REPEAT))
     { // Quand on appuie sur 'A', on mine le bloc devant nous
-        auto x{player.gridPos.x};
-        auto y{player.gridPos.y};
+        auto x{player.position.x};
+        auto y{player.position.y};
+
+        std::cout << "Try to dig" << std::endl;
 
         switch (player.direction)
         {
