@@ -1,9 +1,5 @@
 #include "includes/character.hpp"
 
-#define WIDTH 25
-#define CELLSIZE (1.0f / WIDTH)
-#define CHARACTERSSIZE (1.0f / (WIDTH * 2))
-
 bool isCellFree(const std::vector<Cell>& map, int x, int y) {
     for (const Cell& cell : map) {
         if ((int)cell.positions.x == x && (int)cell.positions.y == y) {

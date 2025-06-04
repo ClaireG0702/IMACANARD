@@ -6,10 +6,6 @@
 #include <queue>
 #include <climits>
 
-#define WIDTH 6
-#define CELLSIZE (1.0f / WIDTH)
-#define CHARACTERSSIZE (1.0f / (WIDTH * 2))
-
 void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map) {
     for(Enemy& enemy: enemies) {
         Cell* cell = nullptr;

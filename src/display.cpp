@@ -12,10 +12,6 @@ static const float GL_VIEW_SIZE = 1.0;
 /* OpenGL Engine */
 GLBI_Engine myEngine;
 
-#define WIDTH 6
-#define CELLSIZE (1.0f / WIDTH)
-#define CHARACTERSSIZE (1.0f / (WIDTH * 2))
-
 std::vector<Cell> map; // the map to be displayed
 StandardMesh *cellMesh = nullptr;
 StandardMesh *characterMesh = nullptr;
