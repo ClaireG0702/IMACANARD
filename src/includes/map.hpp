@@ -21,6 +21,8 @@
 #include "glm/fwd.hpp"
 #include <glm/gtx/matrix_transform_2d.hpp>
 
+#include "game_state.hpp"
+
 // placement objets
 // placement aléatoire
 // gestion des blocs

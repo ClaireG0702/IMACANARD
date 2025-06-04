@@ -5,6 +5,8 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+#include "includes/game_state.hpp"
 #include "includes/display.hpp"
 
 #include <iostream>
@@ -209,7 +211,18 @@ int main()
                 ImGui::TextWrapped("Manger les graines et les poissons pour marquer des points.");
                 //ImGui::PopTextWrapPos();
             } else if (currentPage == Page::END_SCREEN) {
-                ImGui::Text("Fin du jeu");
+                if(gameStatus == GameStatus::WIN) {
+                    ImGui::Text("VICTOIRE");
+                } else if(gameStatus == GameStatus::LOSE) {
+                    ImGui::Text("DEFAITE");
+                }
+
+                if(ImGui::Button("Rejouer")) {
+                    //TODO
+                }
+                if(ImGui::Button("Menu")) {
+                    //TODO
+                }
             }
 
             ImGui::End();

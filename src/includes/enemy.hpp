@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game_state.hpp"
 #include "map.hpp"
 #include "character.hpp"
 #include "player.hpp"

@@ -22,7 +22,7 @@ bool checkIfPositionIsValid(const std::vector<Cell>& map, glm::vec2 playerPos) {
         int cx = std::round(corner.x);
         int cy = std::round(corner.y);
 
-        if (cx < 0 || cy < 0 || cx >= WIDTH || cy >= WIDTH || !isCellFree(map, cx, cy)) {
+        if (cx < 0 || cy < 0 || cx >= width || cy >= width || !isCellFree(map, cx, cy)) {
             return false;
         }
     }

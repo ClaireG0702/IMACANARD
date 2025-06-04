@@ -12,8 +12,7 @@
 #include "tools/matrix_stack.hpp"
 #include "tools/basic_mesh.hpp"
 
-#include "const.hpp"
-
+#include "game_state.hpp"
 #include "player.hpp"
 #include "enemy.hpp"
 #include "character.hpp"

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "const.hpp"
-
+#include "game_state.hpp"
 #include "player.hpp"
 #include "enemy.hpp"
 #include "map.hpp"

@@ -158,7 +158,7 @@ std::vector<CellDirection> createDirectedMap(std::vector<Cell> &map) {
     return directedMap;
 }
 
-void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap, std::vector<Cell>& map, float deltaTime) {
+void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap, std::vector<Cell>& map, Player player, float deltaTime) {
     for (Enemy& enemy : enemies) {
         auto it = std::find_if(directedMap.begin(), directedMap.end(), [&enemy](const CellDirection& cellDir) {
             return cellDir.positions == enemy.gridPos;
