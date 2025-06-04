@@ -207,6 +207,11 @@ void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>
         enemy.position = nextPos;
         enemy.direction = dir;
         enemy.gridPos = glm::vec2(std::round(enemy.position.x), std::round(enemy.position.y));
+
+        if (glm::distance(enemy.position, player.position) <= 0.5f) {
+            gameStatus = GameStatus::LOSE;
+            currentPage = Page::END_SCREEN;
+        }
     }
 }
 

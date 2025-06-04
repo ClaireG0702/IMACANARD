@@ -23,14 +23,6 @@ static const double FRAMERATE_IN_SECONDS = 1. / 30.;
 static float aspectRatio = 1.0f;
 static const float GL_VIEW_SIZE = 1.0f;
 
-enum class Page {
-    MAIN_MENU,
-    SETTINGS,
-    RULES,
-    GAME,
-    END_SCREEN
-};
-
 /* Error handling function */
 void onError(int error, const char *description)
 {
@@ -127,7 +119,6 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Page currentPage = Page::MAIN_MENU;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -236,6 +227,9 @@ int main()
                 ImGui::Bullet();
                 ImGui::TextWrapped("Manger les graines et les poissons pour marquer des points.");
             } else if (currentPage == Page::END_SCREEN) {
+                gameStatus = GameStatus::WIN;
+                //TODO : function to reset game
+
                 if(gameStatus == GameStatus::WIN) {
                     ImGui::Text("VICTOIRE");
                 } else if(gameStatus == GameStatus::LOSE) {
@@ -246,7 +240,7 @@ int main()
                     //TODO
                 }
                 if(ImGui::Button("Menu")) {
-                    //TODO
+                    currentPage = Page::MAIN_MENU;
                 }
             }
 
