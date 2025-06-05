@@ -51,7 +51,7 @@ void onKey(GLFWwindow *window, int key, int scancode, int action, int mods)
     switch (key)
     {
     case GLFW_KEY_A: // equals to q because well qwerty and azerty keyboards are different
-        clearScene();    
+        clearScene();
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         break;
 
@@ -122,6 +122,7 @@ int main()
 
     bool gameNeedsInit = false;
     /* Loop until the user closes the window */
+    initScene();
     while (!glfwWindowShouldClose(window))
     {
         /* Get time (in second) at loop beginning */
@@ -151,7 +152,8 @@ int main()
 
                 ImGui::Dummy(ImVec2(0.0f, 75.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
-                if(ImGui::Button("Jouer", ImVec2(250, 70))) {
+                if (ImGui::Button("Jouer", ImVec2(250, 70)))
+                {
                     currentPage = Page::GAME;
                 }
 
@@ -171,7 +173,8 @@ int main()
 
                 ImGui::Dummy(ImVec2(0.0f, 35.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
-                if(ImGui::Button("Quitter", ImVec2(250, 70))) {
+                if (ImGui::Button("Quitter", ImVec2(250, 70)))
+                {
                     clearScene();
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
                 }
@@ -204,9 +207,12 @@ int main()
 
                 ImGui::Dummy(ImVec2(0.0f, 25.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.25f);
-                if(ImGui::Button("Réinitialiser")) {
-                    mapWidth = 25; width = 25;
-                    nbEnemies = 2; numberOfEnemies = 2;
+                if (ImGui::Button("Réinitialiser"))
+                {
+                    mapWidth = 25;
+                    width = 25;
+                    nbEnemies = 2;
+                    numberOfEnemies = 2;
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Enregistrer"))
@@ -254,7 +260,8 @@ int main()
                     ImGui::Text("DEFAITE");
                 }
 
-                if(ImGui::Button("Rejouer")) {
+                if (ImGui::Button("Rejouer"))
+                {
                     gameNeedsInit = true;
                     clearScene();
                     currentPage = Page::GAME;
@@ -265,7 +272,8 @@ int main()
                     currentPage = Page::MAIN_MENU;
                 }
                 ImGui::SameLine();
-                if(ImGui::Button("Quitter")) {
+                if (ImGui::Button("Quitter"))
+                {
                     clearScene();
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
                 }
@@ -274,8 +282,10 @@ int main()
             ImGui::End();
         }
 
-        if(currentPage == Page::GAME) {
-            if (gameNeedsInit) {
+        if (currentPage == Page::GAME)
+        {
+            if (gameNeedsInit)
+            {
                 clearScene();
                 initScene();
                 gameNeedsInit = false;

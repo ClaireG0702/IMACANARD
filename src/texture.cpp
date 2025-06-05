@@ -27,6 +27,7 @@ GLBI_Texture createOneTexture(const char *filename)
 
 std::vector<GLBI_Texture> initTextures()
 {
+    std::cout << "Initializing textures";
     std::vector<GLBI_Texture> allTextures{};
 
     std::array<char const *, 5> filenames{"assets/images/Water.png",
