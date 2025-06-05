@@ -36,7 +36,6 @@ extern GLBI_Engine myEngine;
 void initScene();
 void renderScene();
 
-StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight, float z);
 void setTypeCell(Cell const &cell);
 StandardMesh *createSharedCellMesh(Sprite const &sprite, float cellWidth, float cellHeight);
 void drawMap(std::vector<Cell> const &map);

@@ -26,7 +26,7 @@ std::vector<GLBI_Texture> allTextures{};
 SpriteSheet water{"assets/images/Water.png", 192, 224, 12, 16};
 SpriteSheet yellowDucky{"assets/images/yellow_ducky.png", 192, 128, 6, 4};
 SpriteSheet brownDucky{"assets/images/brown_ducky.png", 192, 128, 6, 4};
-SpriteSheet otterSheet{"assets/images/otter.png", 96, 64, 3, 2};
+// SpriteSheet otterSheet{"assets/images/otter.png", 96, 64, 3, 2};
 
 Sprite empty{water, {2, 11.55}, 1 / 12.f, 1 / 16.f};      // water --> 0
 Sprite obstacle{water, {0, 4.72}, 1 / 12.f, 1 / 16.f};    // rock -> 1
