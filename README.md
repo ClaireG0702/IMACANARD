@@ -26,15 +26,15 @@ Les ennemis cherchent à atteindre le joueur. Ils sont représentés par des lou
 
 ### Les blocs
 Nous avons utilisé la répartition des cases suivantes : 
-- **Bloc vide (0):** représenté par un bloc vert (sans textures) et un bloc d'eau (avec textures). Le joueur peut aller dessus.
+- **Bloc vide (0):** représenté par un bloc bleu (sans textures) et un bloc d'eau (avec textures). Le joueur peut aller dessus.
 
 - **Bloc plein (1):** représenté par un bloc bleu (sans textures) et un bloc de pierre sur un bloc d'eau (avec textures). Le joueur ne peut pas aller dessus à moins de détruire le bloc.
 
-- **Objet (4):** représenté par un bloc noir (sans textures) et une ombre (avec textures). Le joueur peut collecter des objets.
+- **Objet (4):** représenté par un bloc bleu foncé (sans textures) et une ombre (avec textures). Le joueur peut collecter des objets.
 
 - **Obstacle (2) :** représenté par un bloc bleu (sans textures) et un bloc d'eau et un nénuphar (avec textures). Le joueur ne peut jamais aller dessus.
 
-- **Piège (5):** représenté par un bloc vert (sans textures) et un bloc d'eau et un tourbillon (avec textures). Le joueur peut aller dessus mais c'est la fin de la partie.
+- **Piège (5):** représenté par un bloc bleu clair (sans textures) et un bloc d'eau et un tourbillon (avec textures). Le joueur peut aller dessus mais c'est la fin de la partie.
 
 - **Accélérateur (3):** représenté par un bloc jaune-vert (sans textures) et des fleurs. Il donne au joueur un court boost de vitesse.
 
