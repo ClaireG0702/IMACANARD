@@ -3,7 +3,7 @@
 bool isCellFree(const std::vector<Cell>& map, int x, int y) {
     for (const Cell& cell : map) {
         if ((int)cell.positions.x == x && (int)cell.positions.y == y) {
-            return cell.value == 0;
+            return cell.value != 1;
         }
     }
     return false;
@@ -46,7 +46,7 @@ bool checkElements(std::vector<Cell>& map, Player player) {
             return cell.positions.x == cx && cell.positions.y == cy;
         });
 
-        if (cx >= 0 || cy >= 0 || cx < width || cy < width || mapIt->value == 3 || mapIt->value == 4) {
+        if (cx >= 0 && cy >= 0 && cx < width && cy < width && (mapIt->value == 3 || mapIt->value == 4)) {
             if(mapIt->value == 3) {
                 std::cout << "Trap !" << std::endl;
                 gameStatus = GameStatus::LOSE;
@@ -84,13 +84,6 @@ void updatePlayerPosition(std::vector<Cell>& map, float deltaTime, Player& playe
             std::round(player.position.x),
             std::round(player.position.y)
         );
-    } else {
-        if(checkElements(map, player)) {
-            player.position = nextPos;
-            player.gridPos = glm::vec2(
-                std::round(player.position.x),
-                std::round(player.position.y)
-            );
-        }
+        checkElements(map, player);
     }
 }

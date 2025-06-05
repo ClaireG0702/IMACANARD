@@ -183,8 +183,8 @@ void drawBaseMap(std::vector<Cell> const &map)
 
 void renderScene()
 {
-    drawTexturedBaseMap(map, allTextures, cellSize, cellMesh);
-    // drawBaseMap(map);
+    //drawTexturedBaseMap(map, allTextures, cellSize, cellMesh);
+    drawBaseMap(map);
 
     static double lastTime = glfwGetTime();
     double currentTime = glfwGetTime();

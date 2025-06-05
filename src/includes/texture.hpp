@@ -18,7 +18,7 @@ struct SpriteSheet
 
 struct Sprite
 {
-    const SpriteSheet &SpriteSheet;
+    const SpriteSheet &spriteSheet;
     glm::vec2 positions;
     float spriteWidth;
     float spriteHeight;
