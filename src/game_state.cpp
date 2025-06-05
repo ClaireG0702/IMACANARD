@@ -13,3 +13,5 @@ int numberOfObjects = width / 2;
 int probObjectSpawn = 30;
 int probTrap = 30;
 int probMinableBloc = 5;
+int probBonusBloc=25;
+int probBoosterBloc=2;

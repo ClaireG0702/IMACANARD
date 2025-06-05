@@ -25,3 +25,5 @@ extern int numberOfObjects;
 extern int probObjectSpawn;
 extern int probTrap;
 extern int probMinableBloc;
+extern int probBonusBloc;
+extern int probBoosterBloc;
