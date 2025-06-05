@@ -30,6 +30,41 @@ bool checkIfPositionIsValid(const std::vector<Cell>& map, glm::vec2 playerPos) {
     return true;
 }
 
+bool checkElements(std::vector<Cell>& map, Player player) {
+    glm::vec2 corners[4] = {
+        {player.position.x - 0.5f, player.position.y - 0.5f}, // bas gauche
+        {player.position.x, player.position.y - 0.5f}, // bas droite
+        {player.position.x - 0.5f, player.position.y}, // haut gauche
+        {player.position.x, player.position.y}  // haut droite
+    };
+
+    for (const glm::vec2& corner : corners) {
+        int cx = std::round(corner.x);
+        int cy = std::round(corner.y);
+
+        auto mapIt = std::find_if(map.begin(), map.end(), [cx, cy](const Cell &cell) {
+            return cell.positions.x == cx && cell.positions.y == cy;
+        });
+
+        if (cx >= 0 || cy >= 0 || cx < width || cy < width || mapIt->value == 3 || mapIt->value == 4) {
+            if(mapIt->value == 3) {
+                std::cout << "Trap !" << std::endl;
+                gameStatus = GameStatus::LOSE;
+                currentPage = Page::END_SCREEN;
+            }
+            if(mapIt->value == 4) {
+                std::cout << "Food !" << std::endl;
+                player.objectsNbr++;
+                mapIt->value = 0;
+            }
+            
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void updatePlayerPosition(std::vector<Cell>& map, float deltaTime, Player& player) {
     glm::vec2 movement(0.f);
 
@@ -49,5 +84,13 @@ void updatePlayerPosition(std::vector<Cell>& map, float deltaTime, Player& playe
             std::round(player.position.x),
             std::round(player.position.y)
         );
+    } else {
+        if(checkElements(map, player)) {
+            player.position = nextPos;
+            player.gridPos = glm::vec2(
+                std::round(player.position.x),
+                std::round(player.position.y)
+            );
+        }
     }
 }

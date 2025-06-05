@@ -18,7 +18,7 @@ struct Enemy {
     float speed {1.5f};
 };
 
-void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map);
+void initEnemies(std::vector<Enemy>& enemies, Player player, std::vector<Cell> &map);
 void updateEnemies(std::vector<Enemy>& enemies, const std::vector<CellDirection>& directedMap, std::vector<Cell>& map, Player player, float deltaTime);
 
 std::vector<Cell> createValuedMap(std::vector<Cell> &map, Player &posPlayer);

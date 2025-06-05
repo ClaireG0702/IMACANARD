@@ -11,6 +11,7 @@ struct Player {
     glm::vec2 gridPos {};
     Direction direction {};
     float speed {2.0f};
+    int objectsNbr {0};
 
     void digging (Cell& block);
 };

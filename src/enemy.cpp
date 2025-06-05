@@ -6,13 +6,15 @@
 #include <queue>
 #include <climits>
 
-void initEnemies(std::vector<Enemy>& enemies, std::vector<Cell> &map) {
+void initEnemies(std::vector<Enemy>& enemies, Player player, std::vector<Cell> &map) {
     for(Enemy& enemy: enemies) {
         Cell* cell = nullptr;
         while(!cell) {
             int index = std::rand() % map.size();
             if(map[index].value == 0) {
-                cell = &map[index];
+                if(player.position != map[index].positions) {
+                    cell = &map[index];
+                }
             }
         }
 
@@ -70,7 +72,7 @@ std::vector<Cell> createValuedMap(std::vector<Cell> &map, Player &player) {
                 auto mapIt = std::find_if(map.begin(), map.end(), [x, y](const Cell &cell) {
                     return cell.positions.x == x && cell.positions.y == y;
                 });
-                if(mapIt != map.end() && mapIt->value == 1) {
+                if(mapIt != map.end() && mapIt->value != 0) {
                     continue; // Ignorer les cellules avec des obstacles
                 }
 

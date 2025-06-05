@@ -29,11 +29,11 @@
 
 enum class BlockType
 {
-    EMPTY,    // water
-    PLAIN,    // bloc qu'on peut détruire --> nénuphar
-    TRAP,     // piège
-    OBSTACLE, // wood, rock
-    OBJECT,   // shadow + anim si on a le temps
+    EMPTY,    // water |--> 0
+    PLAIN,    // wood, rock |--> 1
+    OBSTACLE, // bloc qu'on peut détruire --> nénuphar |--> 2
+    TRAP,     // piège |--> 3
+    OBJECT,   // shadow + anim si on a le temps |--> 4
 };
 
 enum class Direction
@@ -83,3 +83,5 @@ std::vector<Cell> generateCellularMap(std::vector<Cell> const &map, int nbIterat
 void displayValuedMap(std::vector<Cell> const &map);
 void displayDirectedMap(std::vector<CellDirection> const &map);
 void digging(Block *block);
+
+void addObjectsAndTraps(std::vector<Cell>& map);

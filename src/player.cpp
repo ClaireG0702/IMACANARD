@@ -7,7 +7,7 @@ void Player::digging (Cell& block){ //action miner
 
     if (block.value == 1){
         if (prob_factor == 5){ // 1 chance sur 5 de trouver un objet dans le bloc destructible.
-            block.value = 2;
+            block.value = 4;
         } else{
             block.value = 0;
         }

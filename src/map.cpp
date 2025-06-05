@@ -158,6 +158,9 @@ std::vector<Cell> generateCellularMap(std::vector<Cell> const &map, int nbIterat
     {
         newMap = cellularAutomata(map);
     }
+
+    addObjectsAndTraps(newMap);
+
     return newMap;
 }
 
@@ -217,6 +220,25 @@ void displayDirectedMap(std::vector<CellDirection> const &map)
         default:
             std::cout << "X ";
             break;
+        }
+    }
+}
+
+void addObjectsAndTraps(std::vector<Cell>& map) {
+    std::srand(std::time(nullptr));
+
+    for(Cell& cell: map) {
+        int probObject{std::rand()%31};
+        int probTrap{std::rand()%31};
+
+        if(cell.value == 0) {
+            if(!((probObject == 30) && (probTrap == 30))) {
+                if(probObject == 30) {
+                    cell.value = 4;
+                } else if (probTrap == 30) {
+                    cell.value = 3;
+                }
+            }
         }
     }
 }

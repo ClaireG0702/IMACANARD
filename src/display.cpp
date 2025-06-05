@@ -41,7 +41,7 @@ void initScene()
     directedMap = createDirectedMap(valuedMap);
 
     enemies = std::vector<Enemy>(numberOfEnemies);
-    initEnemies(enemies, map);
+    initEnemies(enemies, player, map);
 
     // TODO : define positions of obstacles
 }
@@ -128,6 +128,12 @@ void setTypeCell(Cell const &cell)
         break;
     case 1:
         myEngine.setFlatColor(0, 1, 0); // Green
+        break;
+    case 3:
+        myEngine.setFlatColor(0.7f, 0.6f, 1);
+        break;
+    case 4:
+        myEngine.setFlatColor(0, 0.8f, 0.7f); 
         break;
     default:
         myEngine.setFlatColor(0, 0, 0); // Default

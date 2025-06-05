@@ -227,7 +227,6 @@ int main()
                 ImGui::Bullet();
                 ImGui::TextWrapped("Manger les graines et les poissons pour marquer des points.");
             } else if (currentPage == Page::END_SCREEN) {
-                gameStatus = GameStatus::WIN;
                 //TODO : function to reset game
 
                 if(gameStatus == GameStatus::WIN) {
@@ -237,10 +236,15 @@ int main()
                 }
 
                 if(ImGui::Button("Rejouer")) {
-                    //TODO
+                    currentPage = Page::GAME;
                 }
+
                 if(ImGui::Button("Menu")) {
                     currentPage = Page::MAIN_MENU;
+                }
+                ImGui::SameLine();
+                if(ImGui::Button("Quitter")) {
+                    glfwSetWindowShouldClose(window, GLFW_TRUE);
                 }
             }
 
@@ -260,7 +264,6 @@ int main()
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
