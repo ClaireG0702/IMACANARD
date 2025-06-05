@@ -29,12 +29,13 @@ std::vector<GLBI_Texture> allTextures{};
 SpriteSheet water{"assets/images/Water.png", 192, 224, 12, 16};
 SpriteSheet yellowDucky{"assets/images/yellow_ducky.png", 192, 128, 6, 4};
 SpriteSheet brownDucky{"assets/images/brown_ducky.png", 192, 128, 6, 4};
-// SpriteSheet otter{"assets/images/otter.png", 96, 69, 3};
+SpriteSheet otterSheet{"assets/images/otter.png", 96, 64, 3, 2};
 
 Sprite empty{water, {3, 8.465}, 1 / 16.f, 1 / 12.f};
-Sprite plain{water, {8, 1.2}, 1 / 12.f, 1 / 16.f};
+Sprite plain{water, {11, 9.25}, 1 / 12.f, 1 / 16.f};
 
 Sprite playerSprite{yellowDucky, {1, 0}, 1.0 / 6, 1.0 / 4};
+Sprite ennemySprite{otterSheet, {1, 1}, 1.0 / 3, 1.0 / 2};
 
 // GLBI_Texture myTextureTest{};
 
@@ -77,13 +78,13 @@ void setTypeCell(Cell const &cell)
         myEngine.setFlatColor(0.6f, 0.7f, 0);
         break;
     case 4:
-        myEngine.setFlatColor(0, 0, 0.2f); 
+        myEngine.setFlatColor(0, 0, 0.2f);
         break;
     case 5:
         myEngine.setFlatColor(0, 0, 1);
         break;
     case 6:
-        myEngine.setFlatColor(0.3f, 0, 0.2f); 
+        myEngine.setFlatColor(0.3f, 0, 0.2f);
         break;
     default:
         myEngine.setFlatColor(0, 0, 0); // Default
@@ -130,11 +131,6 @@ StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const 
     glm::vec2 topRight{u1, v1};
     glm::vec2 topLeft{u0, v1};
 
-    // glm::vec2 bottomLeft{0.0, 0.0};
-    // glm::vec2 bottomRight{1.0, 0.0};
-    // glm::vec2 topRight{1.0, 1.0};
-    // glm::vec2 topLeft{0.0, 1.0};
-
     std::vector<float>
         uvs{
             bottomLeft.x, bottomLeft.y,   // Bottom Left (0,0)
@@ -178,7 +174,13 @@ void updateEnemiesMesh(std::vector<Enemy> &enemies)
         myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
         myEngine.updateMvMatrix();
 
+        const GLBI_Texture &ennemyTexture{setTextureCell(3, allTextures)};
+        updateUVs(characterMesh, ennemySprite);
+        ennemyTexture.attachTexture();
         characterMesh->draw();
+        ennemyTexture.detachTexture();
+        updateUVs(characterMesh, playerSprite);
+
         myEngine.mvMatrixStack.popMatrix();
     }
 }
@@ -203,9 +205,21 @@ void drawBaseMap(std::vector<Cell> const &map)
         cellMesh->draw();
         cellTexture.detachTexture();
 
+        // switch (cell.value)
+        // {
+        // case 1:
+        //     GLBI_Texture &pngTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
+        //     pngTexture.attachTexture();
+        //     pngMesh->draw();
+        //     pngTexture.detachTexture();
+        //     break;
+
+        // default:
+        //     break;
+        // }
         if (cell.value == 1)
         {
-            GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
+            GLBI_Texture &pngTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
             // updateUVs(pngMesh, plain);
             cellTexture.attachTexture();
             pngMesh->draw();
@@ -333,7 +347,7 @@ void clearScene()
     enemies.clear();
     valuedMap.clear();
     directedMap.clear();
-    //allTextures.clear();
+    // allTextures.clear();
 
     player = Player{};
     enemies = std::vector<Enemy>();

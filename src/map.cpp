@@ -32,15 +32,10 @@ void displayMap(std::vector<Cell> const &map)
     }
 }
 
-unsigned int generateMapValue(bool const random) // TODO : remove random at the end of the project and the if (random)
+unsigned int generateMapValue()
 {
-    if (random)
-    {
-        // TODO : possible to change std::rand to take into account probabilities
-        int mapValue{std::rand() % 2}; // return 0 or 1 --> empty or plain
-        return mapValue;
-    }
-    return 1;
+    int mapValue{std::rand() % 2}; // return 0 or 1 --> empty or plain
+    return mapValue;
 }
 
 std::vector<Cell> generateMap(size_t const height, size_t const width)
@@ -51,10 +46,8 @@ std::vector<Cell> generateMap(size_t const height, size_t const width)
     {
         for (size_t x{}; x < width; x++)
         {
-            unsigned int value{generateMapValue(true)};
+            unsigned int value{generateMapValue()};
             Cell cell{{x, y}, value};
-            // std::cout << cell.positions.x << ", " << cell.positions.y << "; ";
-
             map.push_back(cell);
         }
     }
@@ -104,10 +97,6 @@ std::optional<Cell> findNeighbour(std::vector<Cell> const &map, Cell const &cell
 std::vector<Cell> adjacentCells(std::vector<Cell> const &map, Cell const &cell) // return vect of adjacent cells
 {
     std::vector<Cell> neighbours{};
-
-    // std::cout << "actuel : \n \tx : " << cell.positions.x << ", y : " << cell.positions.y << ", value : " << cell.value << std::endl;
-
-    // std::cout << "voisins : " << std::endl;
     for (int y{-1}; y <= 1; y++)
     {
         for (int x{1}; x >= -1; x--)
@@ -116,8 +105,6 @@ std::vector<Cell> adjacentCells(std::vector<Cell> const &map, Cell const &cell) 
             if ((x != 0 || y != 0) && adjacentCell.has_value())
             {
                 neighbours.push_back(adjacentCell.value());
-                // std::cout << "\tx : " << adjacentCell.value().positions.x << ", y : " << adjacentCell.value().positions.y
-                //           << ", value : " << adjacentCell.value().value << std::endl;
             }
         }
     }
@@ -168,7 +155,8 @@ std::vector<Cell> generateCellularMap(std::vector<Cell> const &map, int nbIterat
 
 void displayValuedMap(std::vector<Cell> const &map)
 {
-    std::cout << "\n" << std::endl;
+    std::cout << "\n"
+              << std::endl;
 
     for (Cell cell : map)
     {
@@ -189,7 +177,8 @@ void displayValuedMap(std::vector<Cell> const &map)
 
 void displayDirectedMap(std::vector<CellDirection> const &map)
 {
-    std::cout << "\n" << std::endl;
+    std::cout << "\n"
+              << std::endl;
 
     for (CellDirection cell : map)
     {
@@ -224,39 +213,48 @@ void displayDirectedMap(std::vector<CellDirection> const &map)
     }
 }
 
-void addObjectsAndTraps(std::vector<Cell>& map) {
+void addObjectsAndTraps(std::vector<Cell> &map)
+{
     std::srand(std::time(nullptr));
-    
+
     // Collecter toutes les cellules d'eau
-    std::vector<Cell*> waterCells;
-    for(Cell& cell : map) {
-        if(cell.value == 0) {
+    std::vector<Cell *> waterCells;
+    for (Cell &cell : map)
+    {
+        if (cell.value == 0)
+        {
             waterCells.push_back(&cell);
         }
     }
-    
+
     // Mélanger les cellules pour un placement aléatoire
     std::random_shuffle(waterCells.begin(), waterCells.end());
-    
+
     int objectsPlaced = 0;
     int trapsPlaced = 0;
-    
+
     // Placer d'abord le nombre minimum d'objets requis
-    for(int i = 0; i < std::min(numberOfObjects, (int)waterCells.size()); i++) {
-        waterCells[i]->value = 4;  // Objet
+    for (int i = 0; i < std::min(numberOfObjects, (int)waterCells.size()); i++)
+    {
+        waterCells[i]->value = 4; // Objet
         objectsPlaced++;
     }
-    
+
     // Placer des pièges et objets supplémentaires de manière aléatoire
-    for(int i = numberOfObjects; i < waterCells.size(); i++) {
+    for (int i = numberOfObjects; i < waterCells.size(); i++)
+    {
         int probO = std::rand() % (probObjectSpawn + 1);
         int probT = std::rand() % (probTrap + 1);
-        
-        if(!((probO == probObjectSpawn) && (probT == probTrap))) {
-            if(probO == probObjectSpawn) {
+
+        if (!((probO == probObjectSpawn) && (probT == probTrap)))
+        {
+            if (probO == probObjectSpawn)
+            {
                 waterCells[i]->value = 4;
                 objectsPlaced++;
-            } else if (probT == probTrap) {
+            }
+            else if (probT == probTrap)
+            {
                 waterCells[i]->value = 5;
                 trapsPlaced++;
             }
@@ -264,33 +262,43 @@ void addObjectsAndTraps(std::vector<Cell>& map) {
     }
 }
 
-void addMinableBlocs(std::vector<Cell>& map) {
+void addMinableBlocs(std::vector<Cell> &map)
+{
     std::srand(std::time(nullptr));
 
-    for(Cell& cell: map) {
+    for (Cell &cell : map)
+    {
         int probMinableB{std::rand() % (probMinableBloc + 1)};
 
-        if(cell.value == 1) {
-            if(probMinableB == probMinableBloc) {
+        if (cell.value == 1)
+        {
+            if (probMinableB == probMinableBloc)
+            {
                 cell.value = 2;
-            } 
+            }
         }
     }
 }
 
-void addBonusBlocks(std::vector<Cell>& map) {
+void addBonusBlocks(std::vector<Cell> &map)
+{
     std::srand(std::time(nullptr));
 
-    for(Cell& cell: map) {
-        int probBonus{std::rand()%probBonusBloc};
-        int probBoost{std::rand()%probBoosterBloc};
+    for (Cell &cell : map)
+    {
+        int probBonus{std::rand() % probBonusBloc};
+        int probBoost{std::rand() % probBoosterBloc};
 
-        if(cell.value == 0) {
-            if(probBonus == 0) {
-                if(probBoost == 0){
+        if (cell.value == 0)
+        {
+            if (probBonus == 0)
+            {
+                if (probBoost == 0)
+                {
                     cell.value = 6;
                 }
-                else{
+                else
+                {
                     cell.value = 3;
                 }
             }
