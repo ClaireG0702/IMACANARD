@@ -234,8 +234,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
     if (key == GLFW_KEY_Q && (action == GLFW_PRESS || action == GLFW_REPEAT))
     { // Quand on appuie sur 'A', on mine le bloc devant nous
-        auto x{player.position.x};
-        auto y{player.position.y};
+        auto x{player.gridPos.x};
+        auto y{player.gridPos.y};
 
         std::cout << "Try to dig" << std::endl;
 

@@ -48,12 +48,10 @@ bool checkElements(std::vector<Cell>& map, Player player) {
 
         if (cx >= 0 && cy >= 0 && cx < width && cy < width && (mapIt->value == 3 || mapIt->value == 4)) {
             if(mapIt->value == 3) {
-                std::cout << "Trap !" << std::endl;
                 gameStatus = GameStatus::LOSE;
                 currentPage = Page::END_SCREEN;
             }
             if(mapIt->value == 4) {
-                std::cout << "Food !" << std::endl;
                 player.objectsNbr++;
                 mapIt->value = 0;
             }
