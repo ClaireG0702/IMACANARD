@@ -32,8 +32,8 @@ SpriteSheet brownDucky{"assets/images/brown_ducky.png", 192, 128, 6, 4};
 SpriteSheet otterSheet{"assets/images/otter.png", 96, 64, 3, 2};
 
 Sprite empty{water, {2, 11.55}, 1 / 12.f, 1 / 16.f};      // water --> 0
-Sprite plain{water, {10.95, 9.25}, 1 / 12.f, 1 / 16.f};   // lilypad --> 1
-Sprite obstacle{water, {0, 4.72}, 1 / 12.f, 1 / 16.f};    // rock -> 2
+Sprite obstacle{water, {0, 4.72}, 1 / 12.f, 1 / 16.f};    // rock -> 1
+Sprite plain{water, {10.95, 9.25}, 1 / 12.f, 1 / 16.f};   // lilypad --> 2
 Sprite acceleration{water, {6, 3.5}, 1 / 12.f, 1 / 16.f}; // light --> 3
 Sprite object{water, {8, 11.5}, 1 / 12.f, 1 / 16.f};      // shadow --> 4
 Sprite trap{water, {1, 0}, 1 / 12.f, 1 / 16.f};           // whirlpool --> 5
@@ -56,7 +56,7 @@ void initScene()
 
     cellMesh = createSharedCellMesh(empty, cellSize, cellSize);
     characterMesh = createSharedCellMesh(playerSprite, characterSize, characterSize);
-    pngMesh = createSharedCellMesh(plain, cellSize, cellSize); // modified line
+    pngMesh = createSharedCellMesh(obstacle, cellSize, cellSize); // modified line
 
     initPlayer(player, map);
     valuedMap = createValuedMap(map, player);
@@ -213,38 +213,82 @@ void drawBaseMap(std::vector<Cell> const &map)
         myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
         myEngine.updateMvMatrix();
 
-        // myEngine.activateTexturing(true);
+        myEngine.activateTexturing(true);
         GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
 
         cellTexture.attachTexture();
         cellMesh->draw();
         cellTexture.detachTexture();
 
-        // switch (cell.value)
-        // {
-        // case 1: // Non minable bloc
+        GLBI_Texture &pngTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))};
+        switch (cell.value)
+        {
+        case 1: // non minable bloc
+        {
+            updateUVs(pngMesh, obstacle);
+            pngTexture.attachTexture();
+            pngMesh->draw();
+            pngTexture.detachTexture();
+            break;
+        }
+        case 2: // minable bloc
+        {
+            updateUVs(pngMesh, plain);
+            pngTexture.attachTexture();
+            pngMesh->draw();
+            pngTexture.detachTexture();
+            break;
+        }
+
+        case 3: // acceleration
+        {
+            updateUVs(pngMesh, acceleration);
+            pngTexture.attachTexture();
+            pngMesh->draw();
+            pngTexture.detachTexture();
+            break;
+        }
+
+        case 4: // shadow
+        {
+            updateUVs(pngMesh, object);
+            pngTexture.attachTexture();
+            pngMesh->draw();
+            pngTexture.detachTexture();
+            break;
+        }
+
+        case 5: // death
+        {
+            updateUVs(pngMesh, trap);
+            pngTexture.attachTexture();
+            pngMesh->draw();
+            pngTexture.detachTexture();
+            break;
+        }
+
+        case 6: // decceleration
+        {
+            updateUVs(pngMesh, holdup);
+            pngTexture.attachTexture();
+            pngMesh->draw();
+            pngTexture.detachTexture();
+            break;
+        }
+
+        default:
+            break;
+        }
+
+        // if (cell.value == 1)
         // {
         //     GLBI_Texture &pngTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
-        //     updateUVs(pngMesh, rock);
-        //     pngTexture.attachTexture();
+        //     // updateUVs(pngMesh, plain);
+        //     cellTexture.attachTexture();
         //     pngMesh->draw();
-        //     pngTexture.detachTexture();
-        //     updatesUVS(pngMesh, )
-        //     break;
+        //     cellTexture.detachTexture();
+        //     // updateUVs(cellMesh, empty);
         // }
-
-        // default:
-        //     break;
-        // }
-        if (cell.value == 1)
-        {
-            GLBI_Texture &pngTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
-            // updateUVs(pngMesh, plain);
-            cellTexture.attachTexture();
-            pngMesh->draw();
-            cellTexture.detachTexture();
-            // updateUVs(cellMesh, empty);
-        }
 
         myEngine.mvMatrixStack.popMatrix();
     }
