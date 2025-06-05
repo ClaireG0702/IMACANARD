@@ -28,9 +28,9 @@ Les ennemis cherchent à atteindre le joueur. Ils sont représentés par des lou
 Nous avons utilisé la répartition des cases suivantes : 
 - **Bloc vide (0):** représenté par un bloc bleu (sans textures) et un bloc d'eau (avec textures). Le joueur peut aller dessus.
 
-- **Bloc plein (1):** représenté par un bloc vert (sans textures) et des fleurs sur un bloc d'eau (avec textures). Le joueur ne peut pas aller dessus à moins de détruire le bloc.
+- **Obstacle (non minable) (1) :** représenté par un bloc vert très foncé (sans textures) et un rocher sur un bloc d'eau (avec textures). Le joueur ne peut jamais aller dessus.
 
-- **Obstacle (2) :** représenté par un bloc vert très foncé (sans textures) et un rocher sur un bloc d'eau (avec textures). Le joueur ne peut jamais aller dessus.
+- **Bloc plein (minable) (2):** représenté par un bloc vert (sans textures) et des fleurs sur un bloc d'eau (avec textures). Le joueur ne peut pas aller dessus à moins de détruire le bloc.
 
 - **Objet (4):** représenté par un bleu très foncé (sans textures) et une ombre (avec textures). Le joueur peut collecter des objets.
 
