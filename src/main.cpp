@@ -62,6 +62,7 @@ void onKey(GLFWwindow *window, int key, int scancode, int action, int mods)
     case GLFW_KEY_Y:
         myEngine.activateTexturing(false);
         break;
+
     default:
         break;
     }
@@ -138,10 +139,12 @@ int main()
         ImGui::SetNextWindowPos(menuPos);
         ImGui::SetNextWindowSize(menuSize);
 
-        if(currentPage != Page::GAME) {
+        if (currentPage != Page::GAME)
+        {
             ImGui::Begin("Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
 
-            if(currentPage == Page::MAIN_MENU) {
+            if (currentPage == Page::MAIN_MENU)
+            {
                 ImGui::Dummy(ImVec2(0.0f, 100.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.24f);
                 ImGui::Text("Bienvenue dans IMACANARD !");
@@ -149,19 +152,20 @@ int main()
                 ImGui::Dummy(ImVec2(0.0f, 75.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
                 if(ImGui::Button("Jouer", ImVec2(250, 70))) {
-                    gameNeedsInit = true;
                     currentPage = Page::GAME;
                 }
 
                 ImGui::Dummy(ImVec2(0.0f, 25.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
-                if(ImGui::Button("Paramètres", ImVec2(250, 70))) {
+                if (ImGui::Button("Paramètres", ImVec2(250, 70)))
+                {
                     currentPage = Page::SETTINGS;
                 }
 
                 ImGui::Dummy(ImVec2(0.0f, 20.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
-                if(ImGui::Button("Règles", ImVec2(250, 70))) {
+                if (ImGui::Button("Règles", ImVec2(250, 70)))
+                {
                     currentPage = Page::RULES;
                 }
 
@@ -171,10 +175,13 @@ int main()
                     clearScene();
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
                 }
-            } else if (currentPage == Page::SETTINGS) {
+            }
+            else if (currentPage == Page::SETTINGS)
+            {
                 static int mapWidth = width, nbEnemies = numberOfEnemies;
 
-                if (ImGui::Button("Retour")) {
+                if (ImGui::Button("Retour"))
+                {
                     currentPage = Page::MAIN_MENU;
                 }
 
@@ -187,14 +194,14 @@ int main()
                 ImGui::SetNextItemWidth(200);
                 ImGui::InputInt("##mapWidth", &mapWidth);
                 mapWidth = std::max(10, std::min(mapWidth, 50));
-                
+
                 ImGui::Dummy(ImVec2(0.0f, 20.0f));
                 ImGui::Text("Nombre d'ennemis :");
                 ImGui::SameLine();
                 ImGui::SetNextItemWidth(200);
                 ImGui::InputInt("##nb_enemies", &nbEnemies);
                 nbEnemies = std::max(2, std::min(nbEnemies, 5));
-                
+
                 ImGui::Dummy(ImVec2(0.0f, 25.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.25f);
                 if(ImGui::Button("Réinitialiser")) {
@@ -202,12 +209,16 @@ int main()
                     nbEnemies = 2; numberOfEnemies = 2;
                 }
                 ImGui::SameLine();
-                if(ImGui::Button("Enregistrer")) {
+                if (ImGui::Button("Enregistrer"))
+                {
                     width = mapWidth;
                     numberOfEnemies = nbEnemies;
                 }
-            } else if (currentPage == Page::RULES) {
-                if (ImGui::Button("Retour")) {
+            }
+            else if (currentPage == Page::RULES)
+            {
+                if (ImGui::Button("Retour"))
+                {
                     currentPage = Page::MAIN_MENU;
                 }
 
@@ -225,16 +236,21 @@ int main()
                 ImGui::Dummy(ImVec2(0.0f, 20.0f));
                 ImGui::Bullet();
                 ImGui::TextWrapped("Évitez les tourbillons et survivez au ennemis !");
-                
+
                 ImGui::Dummy(ImVec2(0.0f, 20.0f));
                 ImGui::Bullet();
                 ImGui::TextWrapped("Manger les graines et les poissons pour marquer des points.");
-            } else if (currentPage == Page::END_SCREEN) {
-                //TODO : function to reset game
+            }
+            else if (currentPage == Page::END_SCREEN)
+            {
+                // TODO : function to reset game
 
-                if(gameStatus == GameStatus::WIN) {
+                if (gameStatus == GameStatus::WIN)
+                {
                     ImGui::Text("VICTOIRE");
-                } else if(gameStatus == GameStatus::LOSE) {
+                }
+                else if (gameStatus == GameStatus::LOSE)
+                {
                     ImGui::Text("DEFAITE");
                 }
 
@@ -244,7 +260,8 @@ int main()
                     currentPage = Page::GAME;
                 }
 
-                if(ImGui::Button("Menu")) {
+                if (ImGui::Button("Menu"))
+                {
                     currentPage = Page::MAIN_MENU;
                 }
                 ImGui::SameLine();
