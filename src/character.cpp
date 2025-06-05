@@ -3,7 +3,7 @@
 bool isCellFree(const std::vector<Cell>& map, int x, int y) {
     for (const Cell& cell : map) {
         if ((int)cell.positions.x == x && (int)cell.positions.y == y) {
-            return cell.value != 1;
+            return (cell.value != 1 && cell.value != 2);
         }
     }
     return false;
@@ -46,8 +46,8 @@ bool checkElements(std::vector<Cell>& map, Player player) {
             return cell.positions.x == cx && cell.positions.y == cy;
         });
 
-        if (cx >= 0 && cy >= 0 && cx < width && cy < width && (mapIt->value == 3 || mapIt->value == 4)) {
-            if(mapIt->value == 3) {
+        if (cx >= 0 && cy >= 0 && cx < width && cy < width && (mapIt->value == 5 || mapIt->value == 4)) {
+            if(mapIt->value == 5) {
                 gameStatus = GameStatus::LOSE;
                 currentPage = Page::END_SCREEN;
             }

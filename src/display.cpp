@@ -64,16 +64,19 @@ void setTypeCell(Cell const &cell)
     switch (cell.value)
     {
     case 0:
-        myEngine.setFlatColor(0, 0, 1); // Blue
+        myEngine.setFlatColor(0, 0, 0.5f); // Blue
         break;
     case 1:
         myEngine.setFlatColor(0, 1, 0); // Green
         break;
-    case 3:
-        myEngine.setFlatColor(0.7f, 0.6f, 1);
+    case 2:
+        myEngine.setFlatColor(0, 0.2f, 0);
         break;
     case 4:
-        myEngine.setFlatColor(0, 0.8f, 0.7f); 
+        myEngine.setFlatColor(0, 0, 1);
+        break;
+    case 5:
+        myEngine.setFlatColor(0, 0, 0.2f); 
         break;
     default:
         myEngine.setFlatColor(0, 0, 0); // Default
@@ -236,8 +239,6 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     { // Quand on appuie sur 'A', on mine le bloc devant nous
         auto x{player.gridPos.x};
         auto y{player.gridPos.y};
-
-        std::cout << "Try to dig" << std::endl;
 
         switch (player.direction)
         {

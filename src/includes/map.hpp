@@ -85,3 +85,4 @@ void displayDirectedMap(std::vector<CellDirection> const &map);
 void digging(Block *block);
 
 void addObjectsAndTraps(std::vector<Cell>& map);
+void addMinableBlocs(std::vector<Cell>& map);
