@@ -46,7 +46,6 @@ void onWindowResized(GLFWwindow * /*window*/, int width, int height)
 
 void onKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-    // int isPressed = (action == GLFW_PRESS);
     key_callback(window, key, scancode, action, mods);
     switch (key)
     {
