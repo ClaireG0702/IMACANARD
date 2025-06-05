@@ -28,17 +28,17 @@ Les ennemis cherchent à atteindre le joueur. Ils sont représentés par des lou
 Nous avons utilisé la répartition des cases suivantes : 
 - **Bloc vide (0):** représenté par un bloc vert (sans textures) et un bloc d'eau (avec textures). Le joueur peut aller dessus.
 
-- **Bloc plein (1):** représenté par un bloc bleu (sans textures) et un bloc nénuphar sur un bloc d'eau (avec textures). Le joueur ne peut pas aller dessus à moins de détruire le bloc.
+- **Bloc plein (1):** représenté par un bloc bleu (sans textures) et un bloc de pierre sur un bloc d'eau (avec textures). Le joueur ne peut pas aller dessus à moins de détruire le bloc.
 
 - **Objet (4):** représenté par un bloc noir (sans textures) et une ombre (avec textures). Le joueur peut collecter des objets.
 
-- **Obstacle (2) :** représenté par un bloc bleu (sans textures) et un bloc d'eau et un rocher (avec textures). Le joueur ne peut jamais aller dessus.
+- **Obstacle (2) :** représenté par un bloc bleu (sans textures) et un bloc d'eau et un nénuphar (avec textures). Le joueur ne peut jamais aller dessus.
 
 - **Piège (5):** représenté par un bloc vert (sans textures) et un bloc d'eau et un tourbillon (avec textures). Le joueur peut aller dessus mais c'est la fin de la partie.
 
-- **Accélérateur (3):** représenté par un bloc jaune-vert (sans textures). Il donne au joueur un court boost de vitesse.
+- **Accélérateur (3):** représenté par un bloc jaune-vert (sans textures) et des fleurs. Il donne au joueur un court boost de vitesse.
 
-- **Ralentisseur (6):** représenté par un bloc violet (sans textures). Il diminue temporairement bla vitesse du joueur.
+- **Ralentisseur (6):** représenté par un bloc violet (sans textures) et des roseaux. Il diminue temporairement la vitesse du joueur.
 
 Ces cases sont implémentés à l'aide d'une struct est constitué de positions et d'une valeur correspondant au type de bloc. Les types de bloc sont stockés dans une classe. 
 
@@ -50,7 +50,7 @@ Puis on y ajoute des objets, des cases pièges, des obstacles, et des modificate
 Le joueur et les ennemis sont ajoutés après la carte.
 
 ### Flow field pathfinding
-Nous utilisons l'algorithme de recherche de chemin suggéré. 
+La direction des ennemis est définie grace à l'algorithme de recherche Breadth-First Search.
 
 ### Interface graphique
 Pour réaliser le menu et l'écran de fin de jeu, nous avons utilisé la librairie imgui.
@@ -64,6 +64,9 @@ tkt
 
 ### Problèmes rencontrés
 
+### Ennemis
+
+La fonction de déplacement des ennemis n'est pas optimisée suffisament, une meilleure gestion dans l'espace leur permettraient de suivre le joueur en permanence. Actuellement, il arrive que les ennemis se bloquent aux coins des murs.
 
 #### Compilation
 

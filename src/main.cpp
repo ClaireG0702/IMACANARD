@@ -302,7 +302,9 @@ int main()
                         ImGuiWindowFlags_NoFocusOnAppearing |
                         ImGuiWindowFlags_NoNav);
             ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + 500);
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 0, 0, 255));
             ImGui::TextWrapped("Nombre d'objets restant pour gagner : %d", remainingObjects);
+            ImGui::PopStyleColor();
             ImGui::PopTextWrapPos();
             ImGui::End();
         }
