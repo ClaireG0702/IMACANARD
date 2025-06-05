@@ -5,12 +5,6 @@
 #include "enemy.hpp"
 #include "map.hpp"
 
-// ce qui y a en commun avec enemy et player
-// déplacement ?
-// ne pas passer à travers les blocs pleins
-// position de départ
-// action avec les blocs en bonus
-
 /*Gestion des collisions
 - je suis dans une tuile si au moins des 4 corners est lui aussi dans la grille
 - pour vérifier : prendre flottant --> arrondir au précédent (avec un round ou un float)
@@ -21,7 +15,8 @@ je calcule position possible + est ce que dans les 4 tuiles possibles y en a 1 q
 */
 
 void updatePlayerPosition(std::vector<Cell> &map, float deltaTime, Player &player);
-bool checkIfPositionIsValid(const std::vector<Cell>& map, glm::vec2 playerPos);
-bool checkElements(std::vector<Cell>& map, Player& player);
-bool isCellBoost(const std::vector<Cell>& map, int x, int y);
-bool isCellSlow(const std::vector<Cell>& map, int x, int y);
+bool checkIfPositionIsValid(const std::vector<Cell> &map, glm::vec2 playerPos);
+bool checkElements(std::vector<Cell> &map, Player &player);
+bool isCellFree(const std::vector<Cell> &map, int x, int y);
+bool isCellBoost(const std::vector<Cell> &map, int x, int y);
+bool isCellSlow(const std::vector<Cell> &map, int x, int y);
