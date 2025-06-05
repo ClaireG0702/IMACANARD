@@ -28,19 +28,19 @@ Les ennemis cherchent à atteindre le joueur. Ils sont représentés par des lou
 Nous avons utilisé la répartition des cases suivantes : 
 - **Bloc vide (0):** représenté par un bloc bleu (sans textures) et un bloc d'eau (avec textures). Le joueur peut aller dessus.
 
-- **Bloc plein (1):** représenté par un bloc bleu (sans textures) et un bloc de pierre sur un bloc d'eau (avec textures). Le joueur ne peut pas aller dessus à moins de détruire le bloc.
+- **Bloc plein (1):** représenté par un bloc vert (sans textures) et des fleurs sur un bloc d'eau (avec textures). Le joueur ne peut pas aller dessus à moins de détruire le bloc.
 
-- **Objet (4):** représenté par un bloc bleu foncé (sans textures) et une ombre (avec textures). Le joueur peut collecter des objets.
+- **Obstacle (2) :** représenté par un bloc vert très foncé (sans textures) et un rocher sur un bloc d'eau (avec textures). Le joueur ne peut jamais aller dessus.
 
-- **Obstacle (2) :** représenté par un bloc bleu (sans textures) et un bloc d'eau et un nénuphar (avec textures). Le joueur ne peut jamais aller dessus.
+- **Objet (4):** représenté par un bleu très foncé (sans textures) et une ombre (avec textures). Le joueur peut collecter des objets.
 
-- **Piège (5):** représenté par un bloc bleu clair (sans textures) et un bloc d'eau et un tourbillon (avec textures). Le joueur peut aller dessus mais c'est la fin de la partie.
+- **Piège (5):** représenté par un bloc bleu saturé (sans textures) et un bloc d'eau et un tourbillon (avec textures). Le joueur peut aller dessus mais c'est la fin de la partie.
 
 - **Accélérateur (3):** représenté par un bloc jaune-vert (sans textures) et des fleurs. Il donne au joueur un court boost de vitesse.
 
 - **Ralentisseur (6):** représenté par un bloc violet (sans textures) et des roseaux. Il diminue temporairement la vitesse du joueur.
 
-Ces cases sont implémentés à l'aide d'une struct est constitué de positions et d'une valeur correspondant au type de bloc. Les types de bloc sont stockés dans une classe. 
+Ces cases sont implémentés à l'aide d'une struct constituée de positions et d'une valeur correspondant au type de bloc. 
 
 ### Génération de la carte
 La carte est généré avec l'algorithme de génération procédurale cellular automata. Dans un premier temps, on y génère des cases vides ou pleines (0 ou 1) avec 50% de chances chacune. Dans un second temps, on regarde les cases adjacentes individuellement, et on y ajuste leur caractère plein ou vide en fonction des voisins.
@@ -60,7 +60,9 @@ Le jeu contient donc un menu via lequel le joueur peut accéder à une page de r
 
 ### Ce qui a bien fonctionné
 
-tkt
+L'algorithme de cellular automata a été assez simple à implémenter, notamment par son explication détaillée dans le sujet du projet.
+
+La cohésion au sein du groupe a permis également de communiquer nos problèmes entre nous et de vérifier les codes des unes et des autres pour les régler.
 
 ### Problèmes rencontrés
 
@@ -82,11 +84,11 @@ Puis ce fut au tour des buffers. En rentrant un mauvais nombre de coordonnées, 
 #### Les textures
 L'affichage des textures a été très compliqué. Nous voulions les initialiser, puis les utiliser en les stockant dans une liste. Cependant, les textures, de par leur composition "s'auto détruisaient", lorsqu'on cherchait à y accéder, elles ne s'affichaient pas. De plus, aucun message d'erreur n'était renvoyé, ne permettant pas de comprendre ce qui n'allait pas.
 
-Après jours d'expérimentation, nous avons fini par demander de l'aide à Enguerrand De Smet. La solution a finalement été de rajouter des ligneslignes manquantes au fichier de texture. 
+Après des jours d'expérimentation, nous avons fini par demander de l'aide à Enguerrand De Smet. La solution a finalement été de rajouter des lignes manquantes à un fichier de la librairie. 
 
 #### Les sprites
 
-L'affichage des sprites était également compliqué. En effet, il fallait normaliser les images qui par défaut n'étaient pas dans le même repère que les textures. Par ailleurs, le lien entre le fait que les coordonnées de la texture dans le buffer correspondait aux coordonnées du sprite à utiliser a été compliqué à comprendre. C'est par hasard que nous avons fait la correspondance. Lorsque nous avons utilisé le mauvais de tableau de coordonnées dans le buffer.
+L'affichage des sprites était également compliqué. En effet, il fallait normaliser les images qui par défaut n'étaient pas dans le même repère que les textures. Par ailleurs, le lien entre le fait que les coordonnées de la texture dans le buffer correspondait aux coordonnées du sprite à utiliser a été compliqué à comprendre. C'est par hasard que nous avons fait la correspondance, lorsque nous avons utilisé le mauvais de tableau de coordonnées dans le buffer.
 
 ![image](/doc/screenshots/screendisplay6.png)
 
@@ -95,11 +97,8 @@ pour retourner les images.
 
 ### Avec plus de temps
 
-Avec plus de temps, nous aurions aimé approfondir un peu plus le jeu. Notamment, rajouter des animations ou améliorer la génération de la carte.
+Avec plus de temps, nous aurions aimé approfondir un peu plus le jeu et le rendre plus efficace. 
 
-<!-- Ajoutez enfin une partie "Post mortem" pour analyser le travail fourni, qu'est ce qui a bien fonctionné, quels ont été les problèmes rencontrés, comment vous les avez surmontés, auriez-vous fait différemment ? Avec plus de temps, qu'est ce que vous pourriez ajouter ? -->
+En synthèse d'images, nous aurions voulu rajouter des animations et rectifier l'affichage des sprites qui est pour le moment positionné à la main.
 
-
-<!-- pour mettre des captures d'écran : créer dossier screenshots puis ![image](./screenshots/pouet.png)-->
- 
-<!-- Éventuellement, si vous souhaitez mettre en avant un bout de code pour sa performance ou parce qu’il s’agit d’une idée intéressante, vous pouvez l'intégrer dans le rapport (mais rester succinct). -->
+En algorithmique, nous aurions voulu améliorer la génération de la carte et, en général, reorganiser notre code pour être plus efficace, notamment en utilisant plus de références.
