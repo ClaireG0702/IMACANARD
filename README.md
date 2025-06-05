@@ -19,7 +19,7 @@ Le joueur incarne un canard qui cherche à échapper à des loutres. Il se dépl
 ## 🧐 Spécifications
 
 ### Joueur
-Le joueur possède une seule vie et perd si l'ennemi arrive sur sa case ou s'il tombe dans un piège. Il est représenté par un canard. Lorsqu'il mine, il y a un pourcentage de chances pour obtenir un objet.
+Le joueur possède une seule vie et perd si l'ennemi arrive sur sa case ou s'il tombe dans un piège. Il est représenté par un canard jaune. Lorsqu'il mine, il y a un pourcentage de chances pour obtenir un objet.
 
 ### Ennemis
 Les ennemis cherchent à atteindre le joueur. Ils sont représentés par des loutres.
@@ -36,14 +36,16 @@ Nous avons utilisé la répartition des cases suivantes :
 
 - **Piège (5):** représenté par un bloc vert (sans textures) et un bloc d'eau et un tourbillon (avec textures). Le joueur peut aller dessus mais c'est la fin de la partie.
 
--**Ralentissement (3) ** **:**  
-jaune_vert
+- **Accélérateur (3):** représenté par un bloc jaune-vert (sans textures). Il donne au joueur un court boost de vitesse.
+
+- **Ralentisseur (6):** représenté par un bloc violet (sans textures). Il diminue temporairement bla vitesse du joueur.
+
 Ces cases sont implémentés à l'aide d'une struct est constitué de positions et d'une valeur correspondant au type de bloc. Les types de bloc sont stockés dans une classe. 
 
 ### Génération de la carte
 La carte est généré avec l'algorithme de génération procédurale cellular automata. Dans un premier temps, on y génère des cases vides ou pleines (0 ou 1) avec 50% de chances chacune. Dans un second temps, on regarde les cases adjacentes individuellement, et on y ajuste leur caractère plein ou vide en fonction des voisins.
 
-Puis on y ajoute des objets, des cases pièges, et des obstacles.
+Puis on y ajoute des objets, des cases pièges, des obstacles, et des modificateurs de vitesse.
 
 Le joueur et les ennemis sont ajoutés après la carte.
 

@@ -15,6 +15,7 @@ GLBI_Engine myEngine;
 std::vector<Cell> map; // the map to be displayed
 StandardMesh *cellMesh = nullptr;
 StandardMesh *characterMesh = nullptr;
+StandardMesh *pngMesh = nullptr;
 
 std::set<int> activeKeys;
 
@@ -25,15 +26,15 @@ std::vector<CellDirection> directedMap;
 
 std::vector<GLBI_Texture> allTextures{};
 
-SpriteSheet water{"assets/images/Water.png", 192, 256, 12, 16};
-SpriteSheet yellowDucky{"assets/images/yellow_ducky.png", 216, 144, 6, 4};
-SpriteSheet brownDucky{"assets/images/brown_ducky.png", 216, 144, 6, 4};
-// SpriteSheet otter{"assets/images/otter.png", 6, 3};
+SpriteSheet water{"assets/images/Water.png", 192, 224, 12, 16};
+SpriteSheet yellowDucky{"assets/images/yellow_ducky.png", 192, 128, 6, 4};
+SpriteSheet brownDucky{"assets/images/brown_ducky.png", 192, 128, 6, 4};
+// SpriteSheet otter{"assets/images/otter.png", 96, 69, 3};
 
-Sprite plain{water, {3, 9}, 16, 16};
-Sprite empty{water, {3, 2}, 16, 16};
+Sprite empty{water, {3, 8.465}, 1 / 16.f, 1 / 12.f};
+Sprite plain{water, {8, 1.2}, 1 / 12.f, 1 / 16.f};
 
-Sprite playerSprite{yellowDucky, {1, 0}, 36, 36};
+Sprite playerSprite{yellowDucky, {1, 0}, 1.0 / 6, 1.0 / 4};
 
 // GLBI_Texture myTextureTest{};
 
@@ -45,13 +46,11 @@ void initScene()
 
     map = generateMap(width, width);
     map = generateCellularMap(map, 4);
-
-    cellMesh = createSharedCellMesh(water, plain, cellSize, cellSize, 0.0f);
-    addTextureBuffer(cellMesh);
-    characterMesh = createSharedCellMesh(yellowDucky, playerSprite, characterSize, characterSize, 1.0f);
-    addTextureBuffer(characterMesh);
-
     allTextures = initTextures();
+
+    cellMesh = createSharedCellMesh(water, empty, cellSize, cellSize);
+    characterMesh = createSharedCellMesh(yellowDucky, playerSprite, characterSize, characterSize);
+    pngMesh = createSharedCellMesh(water, plain, cellSize, cellSize);
 
     initPlayer(player, map);
     valuedMap = createValuedMap(map, player);
@@ -112,24 +111,29 @@ void setTypeCell(Cell const &cell)
     v0 = T.v * spriteHeight, v1 = v0 + spriteHeight
 */
 
-StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const &sprite, float cellWidth, float cellHeight, float z)
+StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const &sprite, float cellWidth, float cellHeight)
 {
     StandardMesh *mesh = new StandardMesh(4, GL_TRIANGLE_FAN);
     std::vector<float> squareCoords{
-        0.0f, 0.0f, z,
-        cellWidth, 0.0f, z,
-        cellWidth, cellHeight, z,
-        0.0f, cellHeight, z};
+        0.0f, 0.0f,
+        cellWidth, 0.0f,
+        cellWidth, cellHeight,
+        0.0f, cellHeight};
 
-    float u0{sprite.positions.x * sprite.spriteWidth / spritesheet.width};
-    float u1{u0 + sprite.spriteWidth / spritesheet.width};
-    float v0{sprite.positions.y * sprite.spriteHeight / spritesheet.height};
-    float v1{v0 + sprite.spriteHeight / spritesheet.height};
+    float u0{sprite.spriteWidth * sprite.positions.x};
+    float u1{u0 + sprite.spriteWidth};
+    float v0{sprite.spriteHeight * sprite.positions.y};
+    float v1{v0 + sprite.spriteHeight};
 
     glm::vec2 bottomLeft{u0, v0};
     glm::vec2 bottomRight{u1, v0};
     glm::vec2 topRight{u1, v1};
     glm::vec2 topLeft{u0, v1};
+
+    // glm::vec2 bottomLeft{0.0, 0.0};
+    // glm::vec2 bottomRight{1.0, 0.0};
+    // glm::vec2 topRight{1.0, 1.0};
+    // glm::vec2 topLeft{0.0, 1.0};
 
     std::vector<float>
         uvs{
@@ -139,7 +143,7 @@ StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const 
             topLeft.x, topLeft.y          // Top Left (0,1)
         };
 
-    mesh->addOneBuffer(0, 3, squareCoords.data(), "coordinates", true);
+    mesh->addOneBuffer(0, 2, squareCoords.data(), "coordinates", true);
     mesh->addOneBuffer(2, 2, uvs.data(), "uvs", true);
     mesh->createVAO();
 
@@ -155,7 +159,10 @@ void updatePlayerMesh(Player &player)
     myEngine.mvMatrixStack.pushMatrix();
     myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
     myEngine.updateMvMatrix();
+    const GLBI_Texture &characterTexture{setTextureCell(1, allTextures)};
+    characterTexture.attachTexture();
     characterMesh->draw();
+    characterTexture.detachTexture();
     myEngine.mvMatrixStack.popMatrix();
 }
 
@@ -170,6 +177,7 @@ void updateEnemiesMesh(std::vector<Enemy> &enemies)
         myEngine.mvMatrixStack.pushMatrix();
         myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
         myEngine.updateMvMatrix();
+
         characterMesh->draw();
         myEngine.mvMatrixStack.popMatrix();
     }
@@ -187,14 +195,31 @@ void drawBaseMap(std::vector<Cell> const &map)
         myEngine.mvMatrixStack.pushMatrix();
         myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
         myEngine.updateMvMatrix();
+
+        myEngine.activateTexturing(true);
+        GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
+
+        cellTexture.attachTexture();
         cellMesh->draw();
+        cellTexture.detachTexture();
+
+        if (cell.value == 1)
+        {
+            GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
+            // updateUVs(pngMesh, plain);
+            cellTexture.attachTexture();
+            pngMesh->draw();
+            cellTexture.detachTexture();
+            // updateUVs(cellMesh, empty);
+        }
+
         myEngine.mvMatrixStack.popMatrix();
     }
 };
 
 void renderScene()
 {
-    //drawTexturedBaseMap(map, allTextures, cellSize, cellMesh);
+    // drawTexturedBaseMap(map, allTextures, cellSize, cellMesh);
     drawBaseMap(map);
 
     static double lastTime = glfwGetTime();

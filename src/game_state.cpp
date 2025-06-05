@@ -14,6 +14,6 @@ int remainingObjects = numberOfObjects;
 
 int probObjectSpawn = 30;
 int probTrap = 30;
-int probMinableBloc = 5;
+int probMinableBloc = 2;
 int probBonusBloc=25;
 int probBoosterBloc=2;
