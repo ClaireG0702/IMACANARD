@@ -74,6 +74,9 @@ void setTypeCell(Cell const &cell)
     case 2:
         myEngine.setFlatColor(0, 0.2f, 0);
         break;
+    case 3:
+        myEngine.setFlatColor(0.6f, 0.7f, 0);
+        break;
     case 4:
         myEngine.setFlatColor(0, 0, 0.2f); 
         break;
