@@ -73,22 +73,22 @@ void setTypeCell(Cell const &cell)
         myEngine.setFlatColor(0, 1, 0); // Green
         break;
     case 2:
-        myEngine.setFlatColor(0, 0.2f, 0);
+        myEngine.setFlatColor(0, 0.2f, 0); // Dark Green
         break;
     case 3:
-        myEngine.setFlatColor(0.6f, 0.7f, 0);
+        myEngine.setFlatColor(0.6f, 0.7f, 0); // Yellow-Green
         break;
     case 4:
-        myEngine.setFlatColor(0, 0, 0.2f);
+        myEngine.setFlatColor(0, 0, 0.2f); //Dark Blue
         break;
     case 5:
-        myEngine.setFlatColor(0, 0, 1);
+        myEngine.setFlatColor(0, 0, 1); //Light Blue
         break;
     case 6:
-        myEngine.setFlatColor(0.3f, 0, 0.2f);
+        myEngine.setFlatColor(0.3f, 0, 0.2f); // Purple
         break;
     default:
-        myEngine.setFlatColor(0, 0, 0); // Default
+        myEngine.setFlatColor(0, 0, 0); // Black
         break;
     }
 }

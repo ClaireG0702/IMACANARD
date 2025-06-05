@@ -27,14 +27,6 @@
 // placement aléatoire
 // gestion des blocs
 
-enum class BlockType
-{
-    EMPTY,    // water |--> 0
-    PLAIN,    // wood, rock |--> 1
-    OBSTACLE, // bloc qu'on peut détruire --> nénuphar |--> 2
-    TRAP,     // piège |--> 3
-    OBJECT,   // shadow + anim si on a le temps |--> 4
-};
 
 enum class Direction
 {
@@ -51,11 +43,6 @@ enum class Direction
 //     SLOW,
 // }
 
-struct Block
-{
-    BlockType type{};
-    // bool object{};
-};
 
 // struct Neighbour
 // {
@@ -82,7 +69,6 @@ std::vector<Cell> cellularAutomata(std::vector<Cell> const &map);
 std::vector<Cell> generateCellularMap(std::vector<Cell> const &map, int nbIterations);
 void displayValuedMap(std::vector<Cell> const &map);
 void displayDirectedMap(std::vector<CellDirection> const &map);
-void digging(Block *block);
 
 void addObjectsAndTraps(std::vector<Cell>& map);
 void addMinableBlocs(std::vector<Cell>& map);
