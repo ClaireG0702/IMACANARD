@@ -219,6 +219,8 @@ int main()
                 {
                     width = mapWidth;
                     numberOfEnemies = nbEnemies;
+                    gameNeedsInit = true;
+                    clearScene();
                 }
             }
             else if (currentPage == Page::RULES)
@@ -246,10 +248,13 @@ int main()
                 ImGui::Dummy(ImVec2(0.0f, 20.0f));
                 ImGui::Bullet();
                 ImGui::TextWrapped("Manger les graines et les poissons pour marquer des points.");
-            } else if (currentPage == Page::END_SCREEN) {
+            }
+            else if (currentPage == Page::END_SCREEN)
+            {
                 ImGui::Dummy(ImVec2(0.0f, 150.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.5f);
-                if(gameStatus == GameStatus::WIN) {
+                if (gameStatus == GameStatus::WIN)
+                {
                     ImGui::Text("VICTOIRE");
                 }
                 else if (gameStatus == GameStatus::LOSE)
@@ -259,7 +264,8 @@ int main()
 
                 ImGui::Dummy(ImVec2(0.0f, 100.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.5f);
-                if(ImGui::Button("Rejouer")) {
+                if (ImGui::Button("Rejouer"))
+                {
                     gameNeedsInit = true;
                     clearScene();
                     currentPage = Page::GAME;
@@ -267,7 +273,8 @@ int main()
 
                 ImGui::Dummy(ImVec2(0.0f, 50.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
-                if(ImGui::Button("Menu")) {
+                if (ImGui::Button("Menu"))
+                {
                     currentPage = Page::MAIN_MENU;
                 }
                 ImGui::SameLine();
@@ -295,12 +302,12 @@ int main()
 
             renderScene();
 
-            ImGui::SetNextWindowBgAlpha(0.1f);       // Transparence de la fenêtre
+            ImGui::SetNextWindowBgAlpha(0.1f); // Transparence de la fenêtre
             ImGui::Begin("Score", nullptr,
-                        ImGuiWindowFlags_NoDecoration | 
-                        ImGuiWindowFlags_AlwaysAutoResize |
-                        ImGuiWindowFlags_NoFocusOnAppearing |
-                        ImGuiWindowFlags_NoNav);
+                         ImGuiWindowFlags_NoDecoration |
+                             ImGuiWindowFlags_AlwaysAutoResize |
+                             ImGuiWindowFlags_NoFocusOnAppearing |
+                             ImGuiWindowFlags_NoNav);
             ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + 500);
             ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 0, 0, 255));
             ImGui::TextWrapped("Nombre d'objets restant pour gagner : %d", remainingObjects);
