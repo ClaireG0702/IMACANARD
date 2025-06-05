@@ -4,10 +4,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "tools/stb_image.h"
 
-void addTextureBuffer(StandardMesh *mesh)
-{
-}
-
 GLBI_Texture createOneTexture(const char *filename)
 {
     int x{};
@@ -42,7 +38,6 @@ std::vector<GLBI_Texture> initTextures()
     allTextures.reserve(filenames.size()); // we already know the size of allTextures
     for (char const *filename : filenames)
     {
-
         allTextures.push_back(createOneTexture(filename)); // createOneTexture creates a new Texture that is pushed at the end of the vector
     }
 
@@ -81,4 +76,27 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
 
         myEngine.mvMatrixStack.popMatrix();
     };
+}
+
+void updateUVs(StandardMesh *mesh, Sprite const &sprite)
+{
+    float u0{sprite.spriteWidth * sprite.positions.x};
+    float u1{u0 + sprite.spriteWidth};
+    float v0{sprite.spriteHeight * sprite.positions.y};
+    float v1{v0 + sprite.spriteHeight};
+
+    glm::vec2 bottomLeft{u0, v0};
+    glm::vec2 bottomRight{u1, v0};
+    glm::vec2 topRight{u1, v1};
+    glm::vec2 topLeft{u0, v1};
+
+    std::vector<float>
+        uvs{
+            bottomLeft.x, bottomLeft.y,   // Bottom Left (0,0)
+            bottomRight.x, bottomRight.y, // Bottom Right (1,0)
+            topRight.x, topRight.y,       // Top Right (1,1)
+            topLeft.x, topLeft.y          // Top Left (0,1)
+        };
+
+    mesh->updateBuffer(2, uvs.data(), 8);
 }
