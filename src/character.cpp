@@ -30,7 +30,7 @@ bool checkIfPositionIsValid(const std::vector<Cell>& map, glm::vec2 playerPos) {
     return true;
 }
 
-bool checkElements(std::vector<Cell>& map, Player player) {
+bool checkElements(std::vector<Cell>& map, Player& player) {
     glm::vec2 corners[4] = {
         {player.position.x - 0.5f, player.position.y - 0.5f}, // bas gauche
         {player.position.x, player.position.y - 0.5f}, // bas droite

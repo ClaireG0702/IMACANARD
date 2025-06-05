@@ -309,4 +309,7 @@ void clearScene()
     valuedMap.clear();
     directedMap.clear();
     //allTextures.clear();
+
+    player = Player{};
+    enemies = std::vector<Enemy>();
 }

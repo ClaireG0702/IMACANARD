@@ -226,18 +226,39 @@ void displayDirectedMap(std::vector<CellDirection> const &map)
 
 void addObjectsAndTraps(std::vector<Cell>& map) {
     std::srand(std::time(nullptr));
-
-    for(Cell& cell: map) {
-        int probO{std::rand() % (probObjectSpawn + 1)};
-        int probT{std::rand() % (probTrap + 1)};
-
+    
+    // Collecter toutes les cellules d'eau
+    std::vector<Cell*> waterCells;
+    for(Cell& cell : map) {
         if(cell.value == 0) {
-            if(!((probO == probObjectSpawn) && (probT == probTrap))) {
-                if(probO == probObjectSpawn) {
-                    cell.value = 4;
-                } else if (probT == probTrap) {
-                    cell.value = 5;
-                }
+            waterCells.push_back(&cell);
+        }
+    }
+    
+    // Mélanger les cellules pour un placement aléatoire
+    std::random_shuffle(waterCells.begin(), waterCells.end());
+    
+    int objectsPlaced = 0;
+    int trapsPlaced = 0;
+    
+    // Placer d'abord le nombre minimum d'objets requis
+    for(int i = 0; i < std::min(numberOfObjects, (int)waterCells.size()); i++) {
+        waterCells[i]->value = 4;  // Objet
+        objectsPlaced++;
+    }
+    
+    // Placer des pièges et objets supplémentaires de manière aléatoire
+    for(int i = numberOfObjects; i < waterCells.size(); i++) {
+        int probO = std::rand() % (probObjectSpawn + 1);
+        int probT = std::rand() % (probTrap + 1);
+        
+        if(!((probO == probObjectSpawn) && (probT == probTrap))) {
+            if(probO == probObjectSpawn) {
+                waterCells[i]->value = 4;
+                objectsPlaced++;
+            } else if (probT == probTrap) {
+                waterCells[i]->value = 5;
+                trapsPlaced++;
             }
         }
     }
