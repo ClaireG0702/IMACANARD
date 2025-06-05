@@ -86,3 +86,4 @@ void digging(Block *block);
 
 void addObjectsAndTraps(std::vector<Cell>& map);
 void addMinableBlocs(std::vector<Cell>& map);
+void addBonusBlocks(std::vector<Cell>& map);

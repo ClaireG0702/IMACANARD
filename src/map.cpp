@@ -161,6 +161,7 @@ std::vector<Cell> generateCellularMap(std::vector<Cell> const &map, int nbIterat
 
     addObjectsAndTraps(newMap);
     addMinableBlocs(newMap);
+    addBonusBlocks(newMap);
 
     return newMap;
 }
@@ -254,6 +255,20 @@ void addMinableBlocs(std::vector<Cell>& map) {
             if(probMinableBloc == 5) {
                 cell.value = 2;
             } 
+        }
+    }
+}
+
+void addBonusBlocks(std::vector<Cell>& map) {
+    std::srand(std::time(nullptr));
+
+    for(Cell& cell: map) {
+        int probBonus{std::rand()%30};
+
+        if(cell.value == 0) {
+            if(probBonus == 0) {
+                cell.value = 3;
+            }
         }
     }
 }

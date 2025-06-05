@@ -3,7 +3,7 @@
 Page currentPage = Page::MAIN_MENU;
 GameStatus gameStatus = GameStatus::WIN;
 
-int width = 10;
+int width = 20;
 float cellSize = 1.0f / width;
 float characterSize = 1.0f / (width * 2);
 

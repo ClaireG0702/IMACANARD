@@ -74,7 +74,19 @@ void updatePlayerPosition(std::vector<Cell>& map, float deltaTime, Player& playe
         default: break;
     }
 
+    auto x = player.position.x;
+    auto y = player.position.y;
+
+    bool isBooster {isCellBoost(map, x , y)};
+    if (isBooster){
+        player.speed += 2;
+    }
+
     glm::vec2 nextPos = player.position + movement * player.speed * deltaTime;
+    
+    if(player.speed > 2.0f){
+        player.speed -= 1.0f;
+    }
 
     if (checkIfPositionIsValid(map, nextPos)) {
         player.position = nextPos;
@@ -84,4 +96,14 @@ void updatePlayerPosition(std::vector<Cell>& map, float deltaTime, Player& playe
         );
         checkElements(map, player);
     }
+}
+
+
+bool isCellBoost(const std::vector<Cell>& map, int x, int y) {
+    for (const Cell& cell : map) {
+        if ((int)cell.positions.x == x && (int)cell.positions.y == y) {
+            return cell.value == 3;
+        }
+    }
+    return false;
 }
