@@ -239,8 +239,8 @@ int main()
                 }
 
                 if(ImGui::Button("Rejouer")) {
-                    clearScene();
                     gameNeedsInit = true;
+                    clearScene();
                     currentPage = Page::GAME;
                 }
 

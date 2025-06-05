@@ -295,11 +295,13 @@ void clearScene()
     if (cellMesh != nullptr)
     {
         delete cellMesh;
+        cellMesh = nullptr;
     }
 
     if (characterMesh != nullptr)
     {
         delete characterMesh;
+        characterMesh = nullptr;
     }
 
     map.clear();
