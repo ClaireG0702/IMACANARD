@@ -54,7 +54,7 @@ La direction des ennemis est définie grace à l'algorithme de recherche Breadth
 
 ### Interface graphique
 Pour réaliser le menu et l'écran de fin de jeu, nous avons utilisé la librairie imgui.
-
+Le jeu contient donc un menu via lequel le joueur peut accéder à une page de règles et une page de paramètres. Il peut s'il le souhaite changer la taille de la grille de jeu et le nombre d'ennemis présents.
 
 ## Post mortem
 
