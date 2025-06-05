@@ -4,15 +4,19 @@ IMACANARD est un jeu créé dans le cadre des cours *Programmation et algorithmi
 
 Il a été implémenté par Emilie DESOMBRE, Océane DRAPEAU et Claire GOBERT. Il fonctionne sur Windows et Linux.
 
-## Règles du jeu
+## 🎲 Règles du jeu 
 
 IMACANARD se joue au clavier. Le joueur se déplace à l'aide des flèches du clavier <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>.
 
-Il mine un bloc plein avec <kbd>a</kbd>.
+Il mine un bloc plein (nénuphar) avec <kbd>a</kbd>.
 
 Il peut quitter le jeu à tout moment avec <kbd>q</kbd>.
 
-## Spécifications
+## 🎨 Thème du jeu
+
+Le joueur incarne un canard qui cherche à échapper à des loutres. Il se déplace dans une étendue d'eau et peut détruire des nénuphars. Lorsqu'il détruit des nénuphars, il peut collecter des ombres. Cependant, il ne peut pas aller sur les rochers. De plus, s'il prend un tourbillon, il perd la partie.
+
+## 🧐 Spécifications
 
 ### Joueur
 Le joueur possède une seule vie et perd si l'ennemi arrive sur sa case ou s'il tombe dans un piège. Il est représenté par un canard. Lorsqu'il mine, il y a un pourcentage de chances pour obtenir un objet.
@@ -20,18 +24,21 @@ Le joueur possède une seule vie et perd si l'ennemi arrive sur sa case ou s'il 
 ### Ennemis
 Les ennemis cherchent à atteindre le joueur. Ils sont représentés par des loutres.
 
-### Carte
-Les cases vides où le joueur peut se déplacer sont représentées par de l'eau
+### Les blocs
+Nous avons utilisé la répartition des cases suivantes : 
+- **Bloc vide (0):** représenté par un bloc vert (sans textures) et un bloc d'eau (avec textures). Le joueur peut aller dessus.
 
-Les cases pleines que le joueur peut détruire sont representées par des nénuphars.
+- **Bloc plein (1):** représenté par un bloc bleu (sans textures) et un bloc nénuphar sur un bloc d'eau (avec textures). Le joueur ne peut pas aller dessus à moins de détruire le bloc.
 
-L'objet à collecter est des ombres.
+- **Objet (4):** représenté par un bloc noir (sans textures) et une ombre (avec textures). Le joueur peut collecter des objets.
 
-L'obstacle qui ne peut pas être détruit est un rocher. 
+- **Obstacle (2) :** représenté par un bloc bleu (sans textures) et un bloc d'eau et un rocher (avec textures). Le joueur ne peut jamais aller dessus.
 
-Le piège est un tourbillon dans l'eau.
+- **Piège (5):** représenté par un bloc vert (sans textures) et un bloc d'eau et un tourbillon (avec textures). Le joueur peut aller dessus mais c'est la fin de la partie.
 
-Ces cases sont implémentés à l'aide d'une struct qui prend en paramètre un type de bloc, sa position.
+-**Ralentissement (3) ** **:**  
+jaune_vert
+Ces cases sont implémentés à l'aide d'une struct est constitué de positions et d'une valeur correspondant au type de bloc. Les types de bloc sont stockés dans une classe. 
 
 ### Génération de la carte
 La carte est généré avec l'algorithme de génération procédurale cellular automata. Dans un premier temps, on y génère des cases vides ou pleines (0 ou 1) avec 50% de chances chacune. Dans un second temps, on regarde les cases adjacentes individuellement, et on y ajuste leur caractère plein ou vide en fonction des voisins.
@@ -51,7 +58,14 @@ Pour réaliser le menu et l'écran de fin de jeu, nous avons utilisé la librair
 
 ### Ce qui a bien fonctionné
 
+tkt
+
 ### Problèmes rencontrés
+
+
+#### Compilation
+
+Il y a eu plusieurs problèmes de compilation : d'abord quand on a ajouté les textures, une de nous avait la fenêtre OpenGL qui n'arrivait pas à charger. Ce qu'on croyait d'abord être dû à un manque de capacité de l'ordinateur était en fait causé par l'utilisation de Clang au lieu de GCC.
 
 #### Affichage de la carte
 L'affichage de base de la map a été un problème. Nous avons cherché à recréer nous même les objets mais nous nous sommes trompés de GL_TRIANGLE_FAN et ça nous a renvoyé quelques erreurs ![image](./doc/screenshots/screendisplay.png)
