@@ -10,6 +10,8 @@ float characterSize = 1.0f / (width * 2);
 int numberOfEnemies = 2;
 int numberOfObjects = width / 2;
 
+int remainingObjects = numberOfObjects;
+
 int probObjectSpawn = 30;
 int probTrap = 30;
 int probMinableBloc = 5;

@@ -230,20 +230,24 @@ int main()
                 ImGui::Bullet();
                 ImGui::TextWrapped("Manger les graines et les poissons pour marquer des points.");
             } else if (currentPage == Page::END_SCREEN) {
-                //TODO : function to reset game
-
+                ImGui::Dummy(ImVec2(0.0f, 150.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.5f);
                 if(gameStatus == GameStatus::WIN) {
                     ImGui::Text("VICTOIRE");
                 } else if(gameStatus == GameStatus::LOSE) {
                     ImGui::Text("DEFAITE");
                 }
 
+                ImGui::Dummy(ImVec2(0.0f, 100.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.5f);
                 if(ImGui::Button("Rejouer")) {
                     gameNeedsInit = true;
                     clearScene();
                     currentPage = Page::GAME;
                 }
 
+                ImGui::Dummy(ImVec2(0.0f, 50.0f));
+                ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
                 if(ImGui::Button("Menu")) {
                     currentPage = Page::MAIN_MENU;
                 }
@@ -268,6 +272,17 @@ int main()
             glDisable(GL_DEPTH_TEST);
 
             renderScene();
+
+            ImGui::SetNextWindowBgAlpha(0.1f);       // Transparence de la fenêtre
+            ImGui::Begin("Score", nullptr,
+                        ImGuiWindowFlags_NoDecoration | 
+                        ImGuiWindowFlags_AlwaysAutoResize |
+                        ImGuiWindowFlags_NoFocusOnAppearing |
+                        ImGuiWindowFlags_NoNav);
+            ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + 500);
+            ImGui::TextWrapped("Nombre d'objets restant pour gagner : %d", remainingObjects);
+            ImGui::PopTextWrapPos();
+            ImGui::End();
         }
         else
         {

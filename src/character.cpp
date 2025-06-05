@@ -53,6 +53,7 @@ bool checkElements(std::vector<Cell>& map, Player& player) {
             }
             if(mapIt->value == 4) {
                 player.objectsNbr++;
+                remainingObjects--;
                 mapIt->value = 0;
 
                 if(player.objectsNbr == numberOfObjects) {
