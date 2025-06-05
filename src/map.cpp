@@ -261,11 +261,17 @@ void addBonusBlocks(std::vector<Cell>& map) {
     std::srand(std::time(nullptr));
 
     for(Cell& cell: map) {
-        int probBonus{std::rand()%30};
+        int probBonus{std::rand()%25};
+        int probBoost{std::rand()%2};
 
         if(cell.value == 0) {
             if(probBonus == 0) {
-                cell.value = 3;
+                if(probBoost == 0){
+                    cell.value = 6;
+                }
+                else{
+                    cell.value = 3;
+                }
             }
         }
     }

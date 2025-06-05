@@ -23,3 +23,4 @@ je calcule position possible + est ce que dans les 4 tuiles possibles y en a 1 q
 void updatePlayerPosition(std::vector<Cell> &map, float deltaTime, Player &player);
 bool checkIfPositionIsValid(const std::vector<Cell>& map, glm::vec2 playerPos);
 bool isCellBoost(const std::vector<Cell>& map, int x, int y);
+bool isCellSlow(const std::vector<Cell>& map, int x, int y);
