@@ -21,4 +21,7 @@ extern float characterSize;
 
 extern int numberOfEnemies;
 extern int numberOfObjects;
-extern int numberOfTrap;
+
+extern int probObjectSpawn;
+extern int probTrap;
+extern int probMinableBloc;

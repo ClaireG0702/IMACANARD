@@ -39,6 +39,10 @@ Sprite playerSprite{yellowDucky, {1, 0}, 36, 36};
 
 void initScene()
 {
+    cellSize = 1.0f / width;
+    characterSize = 1.0f / (width * 2);
+    numberOfObjects = width / 2;
+
     map = generateMap(width, width);
     map = generateCellularMap(map, 4);
 
@@ -55,8 +59,6 @@ void initScene()
 
     enemies = std::vector<Enemy>(numberOfEnemies);
     initEnemies(enemies, player, map);
-
-    // TODO : define positions of obstacles
 }
 
 void setTypeCell(Cell const &cell)
@@ -73,10 +75,10 @@ void setTypeCell(Cell const &cell)
         myEngine.setFlatColor(0, 0.2f, 0);
         break;
     case 4:
-        myEngine.setFlatColor(0, 0, 1);
+        myEngine.setFlatColor(0, 0, 0.2f); 
         break;
     case 5:
-        myEngine.setFlatColor(0, 0, 0.2f); 
+        myEngine.setFlatColor(0, 0, 1);
         break;
     default:
         myEngine.setFlatColor(0, 0, 0); // Default
@@ -280,4 +282,23 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         }
         }
     }
+}
+
+void clearScene()
+{
+    if (cellMesh != nullptr)
+    {
+        delete cellMesh;
+    }
+
+    if (characterMesh != nullptr)
+    {
+        delete characterMesh;
+    }
+
+    map.clear();
+    enemies.clear();
+    valuedMap.clear();
+    directedMap.clear();
+    //allTextures.clear();
 }

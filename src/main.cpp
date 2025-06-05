@@ -51,6 +51,7 @@ void onKey(GLFWwindow *window, int key, int scancode, int action, int mods)
     switch (key)
     {
     case GLFW_KEY_A: // equals to q because well qwerty and azerty keyboards are different
+        clearScene();    
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         break;
 
@@ -115,10 +116,10 @@ int main()
     // glfwSetKeyCallback(window, key_callback);
     glfwSetKeyCallback(window, onKey);
 
-    initScene();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    bool gameNeedsInit = false;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -148,6 +149,7 @@ int main()
                 ImGui::Dummy(ImVec2(0.0f, 75.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
                 if(ImGui::Button("Jouer", ImVec2(250, 70))) {
+                    gameNeedsInit = true;
                     currentPage = Page::GAME;
                 }
 
@@ -166,6 +168,7 @@ int main()
                 ImGui::Dummy(ImVec2(0.0f, 35.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.45f);
                 if(ImGui::Button("Quitter", ImVec2(250, 70))) {
+                    clearScene();
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
                 }
             } else if (currentPage == Page::SETTINGS) {
@@ -195,8 +198,8 @@ int main()
                 ImGui::Dummy(ImVec2(0.0f, 25.0f));
                 ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 200) * 0.25f);
                 if(ImGui::Button("Réinitialiser")) {
-                    mapWidth = 25;
-                    nbEnemies = 2;
+                    mapWidth = 25; width = 25;
+                    nbEnemies = 2; numberOfEnemies = 2;
                 }
                 ImGui::SameLine();
                 if(ImGui::Button("Enregistrer")) {
@@ -236,6 +239,8 @@ int main()
                 }
 
                 if(ImGui::Button("Rejouer")) {
+                    clearScene();
+                    gameNeedsInit = true;
                     currentPage = Page::GAME;
                 }
 
@@ -244,6 +249,7 @@ int main()
                 }
                 ImGui::SameLine();
                 if(ImGui::Button("Quitter")) {
+                    clearScene();
                     glfwSetWindowShouldClose(window, GLFW_TRUE);
                 }
             }
@@ -252,6 +258,11 @@ int main()
         }
 
         if(currentPage == Page::GAME) {
+            if (gameNeedsInit) {
+                clearScene();
+                initScene();
+                gameNeedsInit = false;
+            }
             glClearColor(0.f, 0.0f, 0.2f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glDisable(GL_DEPTH_TEST);

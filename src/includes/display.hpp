@@ -46,3 +46,5 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 void updatePlayerMesh(Player &player);
 void updateEnemiesMesh(std::vector<Enemy> &enemies);
+
+void clearScene();

@@ -167,8 +167,7 @@ std::vector<Cell> generateCellularMap(std::vector<Cell> const &map, int nbIterat
 
 void displayValuedMap(std::vector<Cell> const &map)
 {
-    std::cout << "\n"
-              << std::endl;
+    std::cout << "\n" << std::endl;
 
     for (Cell cell : map)
     {
@@ -189,8 +188,7 @@ void displayValuedMap(std::vector<Cell> const &map)
 
 void displayDirectedMap(std::vector<CellDirection> const &map)
 {
-    std::cout << "\n"
-              << std::endl;
+    std::cout << "\n" << std::endl;
 
     for (CellDirection cell : map)
     {
@@ -229,14 +227,14 @@ void addObjectsAndTraps(std::vector<Cell>& map) {
     std::srand(std::time(nullptr));
 
     for(Cell& cell: map) {
-        int probObject{std::rand()%31};
-        int probTrap{std::rand()%31};
+        int probO{std::rand() % (probObjectSpawn + 1)};
+        int probT{std::rand() % (probTrap + 1)};
 
         if(cell.value == 0) {
-            if(!((probObject == 30) && (probTrap == 30))) {
-                if(probObject == 30) {
+            if(!((probO == probObjectSpawn) && (probT == probTrap))) {
+                if(probO == probObjectSpawn) {
                     cell.value = 4;
-                } else if (probTrap == 30) {
+                } else if (probT == probTrap) {
                     cell.value = 5;
                 }
             }
@@ -248,10 +246,10 @@ void addMinableBlocs(std::vector<Cell>& map) {
     std::srand(std::time(nullptr));
 
     for(Cell& cell: map) {
-        int probMinableBloc{std::rand()%6};
+        int probMinableB{std::rand() % (probMinableBloc + 1)};
 
         if(cell.value == 1) {
-            if(probMinableBloc == 5) {
+            if(probMinableB == probMinableBloc) {
                 cell.value = 2;
             } 
         }

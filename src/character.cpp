@@ -54,6 +54,11 @@ bool checkElements(std::vector<Cell>& map, Player player) {
             if(mapIt->value == 4) {
                 player.objectsNbr++;
                 mapIt->value = 0;
+
+                if(player.objectsNbr == numberOfObjects) {
+                    gameStatus = GameStatus::WIN;
+                    currentPage = Page::END_SCREEN;
+                }
             }
             
             return true;
