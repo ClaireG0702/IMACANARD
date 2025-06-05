@@ -1,7 +1,4 @@
 #include "includes/display.hpp"
-
-// #define STB_IMAGE_IMPLEMENTATION
-// #include "tools/stb_image.h"
 #include <set>
 
 /* Minimal time wanted between two images */
@@ -40,9 +37,8 @@ Sprite trap{water, {1, 0}, 1 / 12.f, 1 / 16.f};           // whirlpool --> 5
 Sprite holdup{water, {11, 11.5}, 1 / 12.f, 1 / 16.f};     // reed --> 6
 
 Sprite playerSprite{yellowDucky, {1, 0}, 1.0 / 6, 1.0 / 4}; // yellow_ducky
-Sprite ennemySprite{otterSheet, {1, 1}, 1.0 / 3, 1.0 / 2};  // otter
-
-// GLBI_Texture myTextureTest{};
+// Sprite ennemySprite{otterSheet, {1, 1}, 1.0 / 3, 1.0 / 2};  // otter
+Sprite ennemySprite{water, {2, 0.15}, 1 / 12.f, 1 / 16.f}; // other enemy
 
 void initScene()
 {
@@ -189,7 +185,7 @@ void updateEnemiesMesh(std::vector<Enemy> &enemies)
         myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
         myEngine.updateMvMatrix();
 
-        const GLBI_Texture &ennemyTexture{setTextureCell(3, allTextures)};
+        const GLBI_Texture &ennemyTexture{setTextureCell(0, allTextures)};
         updateUVs(characterMesh, ennemySprite);
         ennemyTexture.attachTexture();
         characterMesh->draw();
@@ -200,7 +196,7 @@ void updateEnemiesMesh(std::vector<Enemy> &enemies)
     }
 }
 
-void drawBaseMap(std::vector<Cell> const &map)
+void drawMap(std::vector<Cell> const &map)
 {
     for (Cell const &cell : map)
     {
@@ -280,24 +276,13 @@ void drawBaseMap(std::vector<Cell> const &map)
             break;
         }
 
-        // if (cell.value == 1)
-        // {
-        //     GLBI_Texture &pngTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
-        //     // updateUVs(pngMesh, plain);
-        //     cellTexture.attachTexture();
-        //     pngMesh->draw();
-        //     cellTexture.detachTexture();
-        //     // updateUVs(cellMesh, empty);
-        // }
-
         myEngine.mvMatrixStack.popMatrix();
     }
 };
 
 void renderScene()
 {
-    // drawTexturedBaseMap(map, allTextures, cellSize, cellMesh);
-    drawBaseMap(map);
+    drawMap(map);
 
     static double lastTime = glfwGetTime();
     double currentTime = glfwGetTime();
