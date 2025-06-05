@@ -52,7 +52,7 @@ const GLBI_Texture &setTextureCell(int indexTexture, std::vector<GLBI_Texture> c
         return allTextures.back(); // back = error texture --> to know visually something not ok
     }
 
-    return allTextures[indexTexture]; // TODO : find out how to use one part of sprites
+    return allTextures[indexTexture];
 };
 
 void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures, float cellSize, StandardMesh *cellMesh)
@@ -80,15 +80,15 @@ void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture>
 
 void updateUVs(StandardMesh *mesh, Sprite const &sprite)
 {
-    float u0{sprite.spriteWidth * sprite.positions.x};
-    float u1{u0 + sprite.spriteWidth};
-    float v0{sprite.spriteHeight * sprite.positions.y};
-    float v1{v0 + sprite.spriteHeight};
+    float uBL{sprite.spriteWidth * sprite.positions.x};
+    float uTR{uBL + sprite.spriteWidth};
+    float vBL{sprite.spriteHeight * sprite.positions.y};
+    float vTR{vBL + sprite.spriteHeight};
 
-    glm::vec2 bottomLeft{u0, v0};
-    glm::vec2 bottomRight{u1, v0};
-    glm::vec2 topRight{u1, v1};
-    glm::vec2 topLeft{u0, v1};
+    glm::vec2 bottomLeft{uBL, vBL};
+    glm::vec2 bottomRight{uTR, vBL};
+    glm::vec2 topRight{uTR, vTR};
+    glm::vec2 topLeft{uBL, vTR};
 
     std::vector<float>
         uvs{

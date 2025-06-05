@@ -38,8 +38,7 @@ void renderScene();
 
 StandardMesh *createCellBuffer(float const x, float const y, float cellWidth, float cellHeight, float z);
 void setTypeCell(Cell const &cell);
-// StandardMesh *createSharedCellMesh(float cellWidth, float cellHeight, float z = 0.f);
-StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const &sprite, float cellWidth, float cellHeight);
+StandardMesh *createSharedCellMesh(Sprite const &sprite, float cellWidth, float cellHeight);
 void drawBaseMap(std::vector<Cell> const &map);
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);

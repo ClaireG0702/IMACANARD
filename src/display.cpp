@@ -31,11 +31,16 @@ SpriteSheet yellowDucky{"assets/images/yellow_ducky.png", 192, 128, 6, 4};
 SpriteSheet brownDucky{"assets/images/brown_ducky.png", 192, 128, 6, 4};
 SpriteSheet otterSheet{"assets/images/otter.png", 96, 64, 3, 2};
 
-Sprite empty{water, {3, 8.465}, 1 / 16.f, 1 / 12.f};
-Sprite plain{water, {11, 9.25}, 1 / 12.f, 1 / 16.f};
+Sprite empty{water, {2, 11.55}, 1 / 12.f, 1 / 16.f};      // water --> 0
+Sprite plain{water, {10.95, 9.25}, 1 / 12.f, 1 / 16.f};   // lilypad --> 1
+Sprite obstacle{water, {0, 4.72}, 1 / 12.f, 1 / 16.f};    // rock -> 2
+Sprite acceleration{water, {6, 3.5}, 1 / 12.f, 1 / 16.f}; // light --> 3
+Sprite object{water, {8, 11.5}, 1 / 12.f, 1 / 16.f};      // shadow --> 4
+Sprite trap{water, {1, 0}, 1 / 12.f, 1 / 16.f};           // whirlpool --> 5
+Sprite holdup{water, {11, 11.5}, 1 / 12.f, 1 / 16.f};     // reed --> 6
 
-Sprite playerSprite{yellowDucky, {1, 0}, 1.0 / 6, 1.0 / 4};
-Sprite ennemySprite{otterSheet, {1, 1}, 1.0 / 3, 1.0 / 2};
+Sprite playerSprite{yellowDucky, {1, 0}, 1.0 / 6, 1.0 / 4}; // yellow_ducky
+Sprite ennemySprite{otterSheet, {1, 1}, 1.0 / 3, 1.0 / 2};  // otter
 
 // GLBI_Texture myTextureTest{};
 
@@ -49,9 +54,9 @@ void initScene()
     map = generateCellularMap(map, 4);
     allTextures = initTextures();
 
-    cellMesh = createSharedCellMesh(water, empty, cellSize, cellSize);
-    characterMesh = createSharedCellMesh(yellowDucky, playerSprite, characterSize, characterSize);
-    pngMesh = createSharedCellMesh(water, plain, cellSize, cellSize);
+    cellMesh = createSharedCellMesh(empty, cellSize, cellSize);
+    characterMesh = createSharedCellMesh(playerSprite, characterSize, characterSize);
+    pngMesh = createSharedCellMesh(plain, cellSize, cellSize); // modified line
 
     initPlayer(player, map);
     valuedMap = createValuedMap(map, player);
@@ -91,28 +96,38 @@ void setTypeCell(Cell const &cell)
         break;
     }
 }
-
 /*
-    Toute la texture                    Accéder à Un bout
-          v                                y
-    (u0,v1) ^ 1          (u1,v1)           ^
-            |****TTTTTTT               ****|TTTTTTT
-            |****TTTTTTT               ****|TTTTTTT
-            |***********               ****|*******
-            |***********               ****|*******
-    (u0,v0) |*********** (u1,v0)       ****|*******
-          -------------> u             ---------------> x = u_norm
-          0              1
+    All texture
+              v
+    (uTL,vTL) ^ 1          (uTR,vTR)
+              |****TTTTTTT
+              |****TTTTTTT
+              |***********
+              |***********
+    (uBL,vBL) |*********** (uBR,BR)
+              -------------> u
+             0              1
 
-    Normalisation :
-    1/nbRow = hauteur de * avec les axes u et v
-    1/nbCol = largeur de * avec les axes u et v
+    Sprite defined as TL : top left    | TR : top right
+                    ___________________|_________________
+                                       |
+                     BL : bottom left  | BR : bottom right
 
-    u0 = T.u * spriteWidth, u1 = u0 + spriteWidth
-    v0 = T.v * spriteHeight, v1 = v0 + spriteHeight
+    uXX is anything on u axis, vXX is anything on v axis
+    Each corner is determined by BL and TR.
+
+    spriteWidth = 1/number of elements on u axis
+    spriteHeight = 1/number of elements on v axis
+
+    uTL = uBL                                                 | uTR = uBL + spriteWidth
+    vTL = vTR                                                 | vTR = vBL + spriteHeight
+    __________________________________________________________|____________________________
+    uBL = spriteWidth * column index (aka x) of the sprite    | uBR = uTR
+    vBL = spriteHeight * row index (aka y) of the sprite      | vBR = vBL
+
 */
 
-StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const &sprite, float cellWidth, float cellHeight)
+StandardMesh *createSharedCellMesh(Sprite const &sprite, float cellWidth, float cellHeight)
 {
     StandardMesh *mesh = new StandardMesh(4, GL_TRIANGLE_FAN);
     std::vector<float> squareCoords{
@@ -121,15 +136,15 @@ StandardMesh *createSharedCellMesh(SpriteSheet const &spritesheet, Sprite const 
         cellWidth, cellHeight,
         0.0f, cellHeight};
 
-    float u0{sprite.spriteWidth * sprite.positions.x};
-    float u1{u0 + sprite.spriteWidth};
-    float v0{sprite.spriteHeight * sprite.positions.y};
-    float v1{v0 + sprite.spriteHeight};
+    float uBL{sprite.spriteWidth * sprite.positions.x};
+    float uTR{uBL + sprite.spriteWidth};
+    float vBL{sprite.spriteHeight * sprite.positions.y};
+    float vTR{vBL + sprite.spriteHeight};
 
-    glm::vec2 bottomLeft{u0, v0};
-    glm::vec2 bottomRight{u1, v0};
-    glm::vec2 topRight{u1, v1};
-    glm::vec2 topLeft{u0, v1};
+    glm::vec2 bottomLeft{uBL, vBL};
+    glm::vec2 bottomRight{uTR, vBL};
+    glm::vec2 topRight{uTR, vTR};
+    glm::vec2 topLeft{uBL, vTR};
 
     std::vector<float>
         uvs{
@@ -198,7 +213,7 @@ void drawBaseMap(std::vector<Cell> const &map)
         myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
         myEngine.updateMvMatrix();
 
-        myEngine.activateTexturing(true);
+        // myEngine.activateTexturing(true);
         GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
 
         cellTexture.attachTexture();
@@ -207,12 +222,16 @@ void drawBaseMap(std::vector<Cell> const &map)
 
         // switch (cell.value)
         // {
-        // case 1:
+        // case 1: // Non minable bloc
+        // {
         //     GLBI_Texture &pngTexture{const_cast<GLBI_Texture &>(setTextureCell(0, allTextures))}; // use references
+        //     updateUVs(pngMesh, rock);
         //     pngTexture.attachTexture();
         //     pngMesh->draw();
         //     pngTexture.detachTexture();
+        //     updatesUVS(pngMesh, )
         //     break;
+        // }
 
         // default:
         //     break;
