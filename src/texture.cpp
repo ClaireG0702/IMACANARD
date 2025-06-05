@@ -55,29 +55,6 @@ const GLBI_Texture &setTextureCell(int indexTexture, std::vector<GLBI_Texture> c
     return allTextures[indexTexture];
 };
 
-void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures, float cellSize, StandardMesh *cellMesh)
-{
-    for (Cell const &cell : map)
-    {
-        setTypeCell(cell);
-
-        float x = -0.5 + cell.positions.x * cellSize;
-        float y = -0.5 + cell.positions.y * cellSize;
-
-        myEngine.mvMatrixStack.pushMatrix();
-        myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
-        myEngine.updateMvMatrix();
-
-        myEngine.activateTexturing(true);
-        GLBI_Texture &cellTexture{const_cast<GLBI_Texture &>(setTextureCell(cell.value, allTextures))}; // use references
-        cellTexture.attachTexture();
-        cellMesh->draw();
-        cellTexture.detachTexture();
-
-        myEngine.mvMatrixStack.popMatrix();
-    };
-}
-
 void updateUVs(StandardMesh *mesh, Sprite const &sprite)
 {
     float uBL{sprite.spriteWidth * sprite.positions.x};

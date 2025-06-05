@@ -27,6 +27,4 @@ struct Sprite
 GLBI_Texture createOneTexture(const char *filename);
 std::vector<GLBI_Texture> initTextures();
 const GLBI_Texture &setTextureCell(int indexTexture, std::vector<GLBI_Texture> const &allTextures);
-void drawTexturedBaseMap(std::vector<Cell> const &map, std::vector<GLBI_Texture> const &allTextures, float cellSize, StandardMesh *cellMesh);
-
 void updateUVs(StandardMesh *mesh, Sprite const &sprite);
